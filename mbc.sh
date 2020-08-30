@@ -49,6 +49,7 @@ function checkNewPricesUpdates {
         #LTC_SELL_PRICE=`curl -s https://www.mercadobitcoin.net/api/LTC/ticker | jq --raw-output '.ticker.sell'`
 }
 
+#check and alert user to sell if the last price has reached an expected price.
 function checkTimeToSell {
 
         #GP_MIN_LIMIT is reference price + 3% of gross profit...
@@ -56,44 +57,62 @@ function checkTimeToSell {
 
         #...and last price must be iqual or greater than the reference price + 3% of gross profit to alert the user: Sell time!!!  
         if [ ${2} -ge ${GP_MIN_LIMIT} ];then
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} last price is currently 3% above of its reference price. Sell? Yes or No?"   >> ${LOGFILE}
+                #Alert user
+                alertUser
+
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} last price is currently 3% above of its reference price. Would you like to sell it?"   >> ${LOGFILE}
                 echo "${3} LAST PRICE IS CURRENTLY 3% ABOVE OF ITS REFERENCE PRICE."
                 echo -n "WOULD YOU LIKE TO SELL PART OF YOUR GROSS PROFIT? [y/n]"
                 read YESNO
 
-                if [ ${YESNO} -eq "y" ];then
+                if [ "${YESNO}" == "y" ];then
                         echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} GROSS PROFIT 1.5% HAS BEEN SOLD!"   >> ${LOGFILE}
 
-                        if [ ${3} -eq "BCH" ];then
+                        if [ "${3}" == "BCH" ];then
+
                                 #update JSON value
                                 JSON_UPDATE=`jq '.refprice.bch = "${BCH_LAST_PRICE}"' `${CONFIG_FILE}``
                                 echo $JSON_UPDATE > ${CONFIG_FILE}
+
                                 #update reference variable
                                 BCH_REF=${BCH_LAST_PRICE}
-                        elif [ ${3} -eq "BTC" ];then
+
+                        elif [ "${3}" == "BTC" ];then
+
                                 #update JSON value
                                 JSON_UPDATE=`jq '.refprice.btc = "${BTC_LAST_PRICE}"' `${CONFIG_FILE}``
                                 echo $JSON_UPDATE > ${CONFIG_FILE}
+
                                 #update reference variable
                                 BTC_REF=${BTC_LAST_PRICE}
-                        elif [ ${3} -eq "CHZ" ];then
+
+                        elif [ "${3}" == "CHZ" ];then
+
                                 #update JSON value
                                 JSON_UPDATE=`jq '.refprice.chz = "${CHZ_LAST_PRICE}"' `${CONFIG_FILE}``
                                 echo $JSON_UPDATE > ${CONFIG_FILE}
+
                                 #update reference variable
                                 CHZ_REF=${CHZ_LAST_PRICE}
-                        elif [ ${3} -eq "ETH" ];then
+
+                        elif [ "${3}" == "ETH" ];then
+
                                 #update JSON value
                                 JSON_UPDATE=`jq '.refprice.eth = "${ETH_LAST_PRICE}"' `${CONFIG_FILE}``
                                 echo $JSON_UPDATE > ${CONFIG_FILE}
+
                                 #update reference variable
                                 ETH_REF=${ETH_LAST_PRICE}
-                        if [ ${3} -eq "LTC" ];then
+
+                        if [ "${3}" == "LTC" ];then
+
                                 #update JSON value
                                 JSON_UPDATE=`jq '.refprice.ltc = "${LTC_LAST_PRICE}"' `${CONFIG_FILE}``
                                 echo $JSON_UPDATE > ${CONFIG_FILE}
+
                                 #update reference variable
                                 LTC_REF=${LTC_LAST_PRICE}
+
                         fi
 
                         echo "`date "+%m/%d/%Y  %H:%M:%S -  "`REFERENCE PRICE BECOMES ${3} LAST PRICE FROM NOW ON."   >> ${LOGFILE}
@@ -103,70 +122,74 @@ function checkTimeToSell {
         fi
 }
 
+#Check and alert user to purchase if the last price has reached an expected price.
 function checkTimeToBuy {
 
-
         while true ; do
-                #GP_MIN_LIMIT is reference price - 3%...
-                GP_MIN_LIMIT=${BCH_REF} - ( ${BCH_REF} / (${GROSS_PROFIT_PERC}/100))
+                #LESS_PRICE is reference price - 3%...
+                LESS_PRICE=${BCH_REF} - ( ${BCH_REF} / (${GROSS_PROFIT_PERC}/100))
 
                 #...and last price must be 3% less than the reference priceto alert the user it's buy time!!!  
-                if [ ${BCH_LAST_PRICE} -le ${GP_MIN_LIMIT} ];then
+                if [ ${BCH_LAST_PRICE} -le ${LESS_PRICE} ];then
                         PERC = ( ${BCH_LAST_PRICE} * 100) / ${BCH_REF} )
-                        echo "Current price of BCH is ${PERC}%"
-                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Current price of BCH is ${PERC}%"   >> ${LOGFILE}
+                        echo "Current % below of reference price is: [${PERC}%]"
                 fi
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Current % of loss for BCH is: [${PERC}%]"   >> ${LOGFILE}
 
-
-                #GP_MIN_LIMIT is reference price - 3%...
-                GP_MIN_LIMIT=${BCH_REF} - ( ${BCH_REF} / (${GROSS_PROFIT_PERC}/100))
+                #LESS_PRICE is reference price - 3%...
+                LESS_PRICE=${BTC_REF} - ( ${BTC_REF} / (${GROSS_PROFIT_PERC}/100))
 
                 #...and last price must be 3% less than the reference priceto alert the user it's buy time!!!  
-                if [ ${BTC_LAST_PRICE} -le ${GP_MIN_LIMIT} ];then
+                if [ ${BTC_LAST_PRICE} -le ${LESS_PRICE} ];then
                         PERC = ( ${BTC_LAST_PRICE} * 100) / ${BTC_REF} )
-                        echo "Current price of BTC is ${PERC}%"
-                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Current price of BTC is ${PERC}%"   >> ${LOGFILE}
+                        echo "Current % below of reference price is: [${PERC}%]"
                 fi
-
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Current % of loss for BTC is: [${PERC}%]"   >> ${LOGFILE}
                 
-                #GP_MIN_LIMIT is reference price - 3%...
-                GP_MIN_LIMIT=${CHZ_REF} - ( ${CHZ_REF} / (${GROSS_PROFIT_PERC}/100))
+                #LESS_PRICE is reference price - 3%...
+                LESS_PRICE=${CHZ_REF} - ( ${CHZ_REF} / (${GROSS_PROFIT_PERC}/100))
 
                 #...and last price must be 3% less than the reference priceto alert the user it's buy time!!!  
-                if [ ${CHZ_LAST_PRICE} -le ${GP_MIN_LIMIT} ];then
+                if [ ${CHZ_LAST_PRICE} -le ${LESS_PRICE} ];then
                         PERC = ( ${CHZ_LAST_PRICE} * 100) / ${CHZ_REF} )
-                        echo "Current price of CHZ is ${PERC}%"
-                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Current price of CHZ is ${PERC}%"   >> ${LOGFILE}
+                        echo "Current % below of reference price is: [${PERC}%]"
                 fi
-
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Current % of loss for CHZ is: [${PERC}%]"   >> ${LOGFILE}
                 
-                #GP_MIN_LIMIT is reference price - 3%...
-                GP_MIN_LIMIT=${ETH_REF} - ( ${ETH_REF} / (${GROSS_PROFIT_PERC}/100))
+                #LESS_PRICE is reference price - 3%...
+                LESS_PRICE=${ETH_REF} - ( ${ETH_REF} / (${GROSS_PROFIT_PERC}/100))
 
                 #...and last price must be 3% less than the reference priceto alert the user it's buy time!!!  
-                if [ ${ETH_LAST_PRICE} -le ${GP_MIN_LIMIT} ];then
+                if [ ${ETH_LAST_PRICE} -le ${LESS_PRICE} ];then
                         PERC = ( ${ETH_LAST_PRICE} * 100) / ${ETH_REF} )
-                        echo "Current price of ETH is ${PERC}%"
-                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Current price of ETH is ${PERC}%"   >> ${LOGFILE}
+                        echo "Current % below of reference price is: [${PERC}%]"
                 fi
-
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Current % of loss for ETH is: [${PERC}%]"   >> ${LOGFILE}
                 
-                #GP_MIN_LIMIT is reference price - 3%...
-                GP_MIN_LIMIT=${LTC_REF} - ( ${LTC_REF} / (${GROSS_PROFIT_PERC}/100))
+                #LESS_PRICE is reference price - 3%...
+                LESS_PRICE=${LTC_REF} - ( ${LTC_REF} / (${GROSS_PROFIT_PERC}/100))
 
                 #...and last price must be 3% less than the reference priceto alert the user it's buy time!!!  
-                if [ ${LTC_LAST_PRICE} -le ${GP_MIN_LIMIT} ];then
+                if [ ${LTC_LAST_PRICE} -le ${LESS_PRICE} ];then
                         PERC = ( ${LTC_LAST_PRICE} * 100) / ${LTC_REF} )
-                        echo "Current price of LTC is ${PERC}%"
-                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Current price of LTC is ${PERC}%"   >> ${LOGFILE}
+                        echo "Current % below of reference price is: [${PERC}%]"
                 fi
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Current % of loss for LTC is: [${PERC}%]"   >> ${LOGFILE}
 
-                echo "Would you like to buy?" 
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`purchase any currency?"   >> ${LOGFILE}
+
+                isNUM=true
+
+                #Alert user
+                alertUser
+
+                echo "Would you like to purchase any currency?" 
                 echo "1 - BCH"
                 echo "2 - BTC"
                 echo "3 - CHZ"
                 echo "4 - ETH"
                 echo "5 - LTC"
+                echo "6 - None"
                 echo -n "Just choose one(number ONLY):"
                 read BUY_OPT
 
@@ -185,7 +208,8 @@ function checkTimeToBuy {
                                    JSON_UPDATE=`jq '.refprice.bch = "${BCH_LAST_PRICE}"' `${CONFIG_FILE}``
                                    echo $JSON_UPDATE > ${CONFIG_FILE} 
                                    #update reference variable
-                                   BCH_REF=${BCH_LAST_PRICE} 
+                                   BCH_REF=${BCH_LAST_PRICE}
+                                   echo "`date "+%m/%d/%Y  %H:%M:%S -  "`BCH has been purchased."   >> ${LOGFILE}
                                    break ;;
 
                                 2) echo "BTC currency purchase approved!"
@@ -194,6 +218,7 @@ function checkTimeToBuy {
                                    echo $JSON_UPDATE > ${CONFIG_FILE} 
                                    #update reference variable
                                    BTC_REF=${BTC_LAST_PRICE} 
+                                   echo "`date "+%m/%d/%Y  %H:%M:%S -  "`BTC has been purchased."   >> ${LOGFILE}
                                    break ;;
 
                                 3) echo "CHZ currency purchase approved!"
@@ -202,6 +227,7 @@ function checkTimeToBuy {
                                    echo $JSON_UPDATE > ${CONFIG_FILE}
                                    #update reference variable
                                    CHZ_REF=${CHZ_LAST_PRICE} 
+                                   echo "`date "+%m/%d/%Y  %H:%M:%S -  "`CHZ has been purchased."   >> ${LOGFILE}
                                    break ;;
 
                                 4) echo "ETH currency purchase approved!"
@@ -210,6 +236,7 @@ function checkTimeToBuy {
                                    echo $JSON_UPDATE > ${CONFIG_FILE} 
                                    #update reference variable
                                    ETH_REF=${ETH_LAST_PRICE} 
+                                   echo "`date "+%m/%d/%Y  %H:%M:%S -  "`ETH has been purchased."   >> ${LOGFILE}
                                    break ;;
 
                                 5) echo "LTC currency purchase approved!"
@@ -218,14 +245,32 @@ function checkTimeToBuy {
                                    echo $JSON_UPDATE > ${CONFIG_FILE} 
                                    #update reference variable
                                    LTC_REF=${LTC_LAST_PRICE} 
+                                   echo "`date "+%m/%d/%Y  %H:%M:%S -  "`LTC has been purchased."   >> ${LOGFILE}
                                    break ;;
 
-                                *) echo "Opcao Invalida!" ;;
+                                6) echo "Currency purchase has been denied!"
+                                   echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Currency purchase has been denied!"   >> ${LOGFILE}
+                                   break ;;
+
+                                *) echo "Invalid option!" 
+                                   echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Invalid option!"   >> ${LOGFILE}
                         esac
+                else
+                        echo "Invalid option!" 
+                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Option is not a number!"   >> ${LOGFILE}
                 fi                
         done
 
 }
+
+#Function to Alert users about script expecting their action to keep going
+function alertUser {
+        #Envia Bip
+        echo "bip"
+        #Envia email
+        echo "email"
+}
+
 
 ###########################################
 #
@@ -233,22 +278,23 @@ function checkTimeToBuy {
 #
 ###########################################
 
+#Log file name y default
 LOGFILE="mbc.log"
-#time in seconds before check prices again
-WAITING=5
+#Time in seconds before check prices again
+WAITING=15
 
 #Mercado Bitcoin tax % or in R$
 #https://www.mercadobitcoin.com.br/comissoes-prazos-limites
 #Executada=sell 0.30%
-#Eexcutora=buy 0.70%
+#Executora 0.70%
 #MBC_TAX_SELL=0.30
 #MBC_TAX_BUY=0.70
-#gross profit %
+#Gross profit in %
 GROSS_PROFIT_PERC=3
 
 #Check access permission toexecute this script
 if [ `id -u` -ne 0 ] && [ `id -g` -ne 0 ]; then
-        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`You need root access permission to execute ${0} command." >> ${LOGFILE}
+        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`ERR: You need root access permission to execute ${0} command." >> ${LOGFILE}
         exit 1
 fi
 
@@ -276,7 +322,7 @@ fi
 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The config file ${CONFIG_FILE} is being used by ${0}."  >> ${LOGFILE}
 
 if [ ! -f "${CONFIG_FILE}" ]; then
-       	echo "`date "+%m/%d/%Y  %H:%M:%S -  "`ERR#3 ${CONFIG_FILE} does not exist locally."  >> ${LOGFILE}
+       	echo "`date "+%m/%d/%Y  %H:%M:%S -  "`ERR: ${CONFIG_FILE} does not exist locally."  >> ${LOGFILE}
 
         #set up a new conf file in JSON format
         while true ; do
@@ -333,6 +379,7 @@ if [ ! -f "${CONFIG_FILE}" ]; then
 else
        	echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Reading config file ${CONFIG_FILE}"   >> ${LOGFILE}
         
+        #Read config file and set up each currency reference price
         BCH_REF=`cat ${CONFIG_FILE} | jq --raw-output '.refprice.bch'`
         BTC_REF=`cat ${CONFIG_FILE} | jq --raw-output '.refprice.btc'`
         CHZ_REF=`cat ${CONFIG_FILE} | jq --raw-output '.refprice.chz'`
