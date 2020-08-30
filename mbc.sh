@@ -105,7 +105,6 @@ function checkTimeToSell {
 
 function checkTimeToBuy {
         echo "checkTimeToBuy TBD"
-        
 }
 
 ###########################################
@@ -238,6 +237,7 @@ while true ; do
         #If so, a question user confirmation y or n to buy crypto currency with the best price.
         checkTimeToBuy
 
+        #Wait 5 seconds by default before start the loop again.
         sleep ${WAITIING}       
 done
 
