@@ -20,33 +20,56 @@
 #
 ###########################################
 
+#Function to Alert users about script expecting their action to keep going
+#Just to ensure email will works properly follow the instruction to prepare your Linux env:
+#Install it with the following commands:
+#
+#sudo apt-get update
+#sudo apt-get install ssmtp
+#
+#Edit /etc/ssmtp/ssmtp.conf to look like this:
+#
+#root=rpi3abc@gmail.com
+#mailhub=smtp.gmail.com:465
+#FromLineOverride=YES
+#AuthUser=rpi3abc@gmail.com
+#AuthPass=testing123
+#UseTLS=YES
+#
+#
+#when you have not allowed access to less secure apps on your gmail. This security setting can be changed through the following link:
+#https://myaccount.google.com/lesssecureapps
+#
+#
+# Send an email trough command line 
+# echo "Testing...1...2...3" | ssmtp myusername@gmail.com
+#
+#check your Gmail box
+#
+#It's enough!
+function alertUser {
+        #Alert user
+        #alertUser "dwulbr@gmail.com" "Subject: BCH is at least 3% below of its reference price. Check it ASAP!"
+        echo ${2} | ssmtp ${1}
+}
+
 
 #Capture cripto currencies values (Last, buy and sell)
 function checkNewPricesUpdates {
         #BCH
         BCH_LAST_PRICE=`curl -s https://www.mercadobitcoin.net/api/BCH/ticker | jq --raw-output '.ticker.last'`
-        #BCH_BUY_PRICE=`curl -s https://www.mercadobitcoin.net/api/BCH/ticker | jq --raw-output '.ticker.buy'`
-        #BCH_SELL_PRICE=`curl -s https://www.mercadobitcoin.net/api/BCH/ticker | jq --raw-output '.ticker.sell'`
 
         #BTC
         BTC_LAST_PRICE=`curl -s https://www.mercadobitcoin.net/api/BTC/ticker | jq --raw-output '.ticker.last'`
-        #BTC_BUY_PRICE=`curl -s https://www.mercadobitcoin.net/api/BTC/ticker | jq --raw-output '.ticker.buy'`
-        #BTC_SELL_PRICE=`curl -s https://www.mercadobitcoin.net/api/BTC/ticker | jq --raw-output '.ticker.sell'`
 
         #CHZ
         CHZ_LAST_PRICE=`curl -s https://www.mercadobitcoin.net/api/CHZ/ticker | jq --raw-output '.ticker.last'`
-        #CHZ_BUY_PRICE=`curl -s https://www.mercadobitcoin.net/api/CHZ/ticker | jq --raw-output '.ticker.buy'`
-        #CHZ_SELL_PRICE=`curl -s https://www.mercadobitcoin.net/api/CHZ/ticker | jq --raw-output '.ticker.sell'`
 
         #ETH
         ETH_LAST_PRICE=`curl -s https://www.mercadobitcoin.net/api/ETH/ticker | jq --raw-output '.ticker.last'`
-        #ETH_BUY_PRICE=`curl -s https://www.mercadobitcoin.net/api/ETH/ticker | jq --raw-output '.ticker.buy'`
-        #ETH_SELL_PRICE=`curl -s https://www.mercadobitcoin.net/api/ETH/ticker | jq --raw-output '.ticker.sell'`
 
         #LTC
         LTC_LAST_PRICE=`curl -s https://www.mercadobitcoin.net/api/LTC/ticker | jq --raw-output '.ticker.last'`
-        #LTC_BUY_PRICE=`curl -s https://www.mercadobitcoin.net/api/LTC/ticker | jq --raw-output '.ticker.buy'`
-        #LTC_SELL_PRICE=`curl -s https://www.mercadobitcoin.net/api/LTC/ticker | jq --raw-output '.ticker.sell'`
 }
 
 #check and alert user to sell if the last price has reached an expected price.
@@ -58,7 +81,7 @@ function checkTimeToSell {
         #...and last price must be iqual or greater than the reference price + 3% of gross profit to alert the user: Sell time!!!  
         if [ ${2} -ge ${GP_MIN_LIMIT} ];then
                 #Alert user
-                alertUser
+                alertUser "dwulbr@gmail.com" "Subject: ${3} is at least 3% above of its reference price. Check it ASAP!"
 
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} last price is currently 3% above of its reference price. Would you like to sell it?"   >> ${LOGFILE}
                 echo "${3} LAST PRICE IS CURRENTLY 3% ABOVE OF ITS REFERENCE PRICE."
@@ -133,6 +156,8 @@ function checkTimeToBuy {
                 if [ ${BCH_LAST_PRICE} -le ${LESS_PRICE} ];then
                         PERC = ( ${BCH_LAST_PRICE} * 100) / ${BCH_REF} )
                         echo "Current % below of reference price is: [${PERC}%]"
+                        #Alert user
+                        alertUser "dwulbr@gmail.com" "Subject: BCH is at least 3% below of its reference price. Check it ASAP!"
                 fi
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Current % of loss for BCH is: [${PERC}%]"   >> ${LOGFILE}
 
@@ -143,6 +168,8 @@ function checkTimeToBuy {
                 if [ ${BTC_LAST_PRICE} -le ${LESS_PRICE} ];then
                         PERC = ( ${BTC_LAST_PRICE} * 100) / ${BTC_REF} )
                         echo "Current % below of reference price is: [${PERC}%]"
+                        #Alert user
+                        alertUser "dwulbr@gmail.com" "Subject: BTC is at least 3% below of its reference price. Check it ASAP!"
                 fi
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Current % of loss for BTC is: [${PERC}%]"   >> ${LOGFILE}
                 
@@ -153,6 +180,8 @@ function checkTimeToBuy {
                 if [ ${CHZ_LAST_PRICE} -le ${LESS_PRICE} ];then
                         PERC = ( ${CHZ_LAST_PRICE} * 100) / ${CHZ_REF} )
                         echo "Current % below of reference price is: [${PERC}%]"
+                        #Alert user
+                        alertUser "dwulbr@gmail.com" "Subject: CHZ is at least 3% below of its reference price. Check it ASAP!"
                 fi
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Current % of loss for CHZ is: [${PERC}%]"   >> ${LOGFILE}
                 
@@ -163,6 +192,9 @@ function checkTimeToBuy {
                 if [ ${ETH_LAST_PRICE} -le ${LESS_PRICE} ];then
                         PERC = ( ${ETH_LAST_PRICE} * 100) / ${ETH_REF} )
                         echo "Current % below of reference price is: [${PERC}%]"
+                        #Alert user
+                        alertUser "dwulbr@gmail.com" "Subject: ETH is at least 3% below of its reference price. Check it ASAP!"
+
                 fi
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Current % of loss for ETH is: [${PERC}%]"   >> ${LOGFILE}
                 
@@ -173,15 +205,16 @@ function checkTimeToBuy {
                 if [ ${LTC_LAST_PRICE} -le ${LESS_PRICE} ];then
                         PERC = ( ${LTC_LAST_PRICE} * 100) / ${LTC_REF} )
                         echo "Current % below of reference price is: [${PERC}%]"
+                        #Alert user
+                        alertUser "dwulbr@gmail.com" "Subject: LTC is at least 3% below of its reference price. Check it ASAP!"
                 fi
+
+                
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Current % of loss for LTC is: [${PERC}%]"   >> ${LOGFILE}
 
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`purchase any currency?"   >> ${LOGFILE}
 
                 isNUM=true
-
-                #Alert user
-                alertUser
 
                 echo "Would you like to purchase any currency?" 
                 echo "1 - BCH"
@@ -261,14 +294,6 @@ function checkTimeToBuy {
                 fi                
         done
 
-}
-
-#Function to Alert users about script expecting their action to keep going
-function alertUser {
-        #Envia Bip
-        echo "bip"
-        #Envia email
-        echo "email"
 }
 
 
