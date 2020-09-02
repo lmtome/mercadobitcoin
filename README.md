@@ -1,5 +1,5 @@
 # mercadobitcoin
-Phase I: It just alert the user which cryptocurrency should be bought/sold.
+Phase I: It just alerts the user which cryptocurrency should be bought/sold.
 
 There are some pre reqs to execute the mbc.sh script. 
 
