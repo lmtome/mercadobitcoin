@@ -76,7 +76,8 @@ function checkNewPricesUpdates {
 function checkTimeToSell {
 
         #GP_MIN_LIMIT is reference price + 3% of gross profit...
-        GP_MIN_LIMIT=( ${1} * (${GROSS_PROFIT_PERC}/100))
+        #GP_MIN_LIMIT is equal LAST_PRICE * (GROSS_PROFIT_PERC / 100)
+        GP_MIN_LIMIT=`bc <<< "scale=1;(${GROSS_PROFIT_PERC}/100)*${1}"`
 
         #...and last price must be iqual or greater than the reference price + 3% of gross profit to alert the user: Sell time!!!  
         if [ ${2} -ge ${GP_MIN_LIMIT} ];then
@@ -150,11 +151,11 @@ function checkTimeToBuy {
 
         while true ; do
                 #LESS_PRICE is reference price - 3%...
-                LESS_PRICE=${BCH_REF} - ( ${BCH_REF} / (${GROSS_PROFIT_PERC}/100))
+                LESS_PRICE=`bc <<< "${BCH_REF}-(${BCH_REF}/(${GROSS_PROFIT_PERC}/100))"`
 
                 #...and last price must be 3% less than the reference priceto alert the user it's buy time!!!  
                 if [ ${BCH_LAST_PRICE} -le ${LESS_PRICE} ];then
-                        PERC = ( ${BCH_LAST_PRICE} * 100) / ${BCH_REF} )
+                        PERC=`bc <<< "(${BCH_LAST_PRICE}*100)/${BCH_REF}"`
                         echo "Current % below of reference price is: [${PERC}%]"
                         #Alert user
                         alertUser "dwulbr@gmail.com" "Subject: BCH is at least 3% below of its reference price. Check it ASAP!"
@@ -162,11 +163,11 @@ function checkTimeToBuy {
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Current % of loss for BCH is: [${PERC}%]"   >> ${LOGFILE}
 
                 #LESS_PRICE is reference price - 3%...
-                LESS_PRICE=${BTC_REF} - ( ${BTC_REF} / (${GROSS_PROFIT_PERC}/100))
+                LESS_PRICE=`bc <<< "${BTC_REF}-(${BTC_REF}/(${GROSS_PROFIT_PERC}/100))"`
 
                 #...and last price must be 3% less than the reference priceto alert the user it's buy time!!!  
                 if [ ${BTC_LAST_PRICE} -le ${LESS_PRICE} ];then
-                        PERC = ( ${BTC_LAST_PRICE} * 100) / ${BTC_REF} )
+                        PERC=`bc <<< "(${BTC_LAST_PRICE}*100)/${BTC_REF}"`
                         echo "Current % below of reference price is: [${PERC}%]"
                         #Alert user
                         alertUser "dwulbr@gmail.com" "Subject: BTC is at least 3% below of its reference price. Check it ASAP!"
@@ -174,11 +175,11 @@ function checkTimeToBuy {
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Current % of loss for BTC is: [${PERC}%]"   >> ${LOGFILE}
                 
                 #LESS_PRICE is reference price - 3%...
-                LESS_PRICE=${CHZ_REF} - ( ${CHZ_REF} / (${GROSS_PROFIT_PERC}/100))
+                LESS_PRICE=`bc <<< "${CHZ_REF}-(${CHZ_REF}/(${GROSS_PROFIT_PERC}/100))"`
 
                 #...and last price must be 3% less than the reference priceto alert the user it's buy time!!!  
                 if [ ${CHZ_LAST_PRICE} -le ${LESS_PRICE} ];then
-                        PERC = ( ${CHZ_LAST_PRICE} * 100) / ${CHZ_REF} )
+                        PERC=`bc <<< "(${CHZ_LAST_PRICE}*100)/${CHZ_REF}"`
                         echo "Current % below of reference price is: [${PERC}%]"
                         #Alert user
                         alertUser "dwulbr@gmail.com" "Subject: CHZ is at least 3% below of its reference price. Check it ASAP!"
@@ -186,11 +187,11 @@ function checkTimeToBuy {
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Current % of loss for CHZ is: [${PERC}%]"   >> ${LOGFILE}
                 
                 #LESS_PRICE is reference price - 3%...
-                LESS_PRICE=${ETH_REF} - ( ${ETH_REF} / (${GROSS_PROFIT_PERC}/100))
+                LESS_PRICE=`bc <<< "${ETH_REF}-(${ETH_REF}/(${GROSS_PROFIT_PERC}/100))"`
 
                 #...and last price must be 3% less than the reference priceto alert the user it's buy time!!!  
                 if [ ${ETH_LAST_PRICE} -le ${LESS_PRICE} ];then
-                        PERC = ( ${ETH_LAST_PRICE} * 100) / ${ETH_REF} )
+                        PERC=`bc <<< "(${ETH_LAST_PRICE}*100)/${ETH_REF}"`
                         echo "Current % below of reference price is: [${PERC}%]"
                         #Alert user
                         alertUser "dwulbr@gmail.com" "Subject: ETH is at least 3% below of its reference price. Check it ASAP!"
@@ -199,11 +200,11 @@ function checkTimeToBuy {
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Current % of loss for ETH is: [${PERC}%]"   >> ${LOGFILE}
                 
                 #LESS_PRICE is reference price - 3%...
-                LESS_PRICE=${LTC_REF} - ( ${LTC_REF} / (${GROSS_PROFIT_PERC}/100))
+                LESS_PRICE=`bc <<< "${LTC_REF}-(${LTC_REF}/(${GROSS_PROFIT_PERC}/100))"`
 
                 #...and last price must be 3% less than the reference priceto alert the user it's buy time!!!  
                 if [ ${LTC_LAST_PRICE} -le ${LESS_PRICE} ];then
-                        PERC = ( ${LTC_LAST_PRICE} * 100) / ${LTC_REF} )
+                        PERC=`bc <<< "(${LTC_LAST_PRICE}*100)/${LTC_REF}"`
                         echo "Current % below of reference price is: [${PERC}%]"
                         #Alert user
                         alertUser "dwulbr@gmail.com" "Subject: LTC is at least 3% below of its reference price. Check it ASAP!"
