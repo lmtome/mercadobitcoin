@@ -1,7 +1,7 @@
 # mercadobitcoin
-Phase I: It just alerts the user which cryptocurrency should be bought/sold.
+Phase I: It just alerts the user about which crypto currency should be bought/sold.
 
-There are some pre reqs to execute the mbc.sh script. 
+There are some pre-reqs to execute the mbc.sh script. 
 
 1) First of all install jq for JSON file handling and ssmtp to make our life easiest:
 
