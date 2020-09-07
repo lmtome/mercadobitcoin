@@ -8,6 +8,8 @@ There are some pre-reqs to execute the mbc.sh script.
 sudo apt update
 sudo apt install jq
 sudo apt install ssmtp
+mv /etc/ssmtp/ssmtp.conf /etc/ssmtp/ssmtp.conf.bkp
+cp ssmtp.conf /etc/ssmtp/ssmtp.conf
 
 2) Run mcb.sh as root
 
