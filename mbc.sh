@@ -19,8 +19,14 @@
 #
 ###########################################
 
-#Log file name y default
+#MBC general log file for ERR and INF messages
 LOGFILE="mbc.log"
+#All buying transations will be logged on this file
+BUYLOGFILE=".buy.log"
+#All selling transations will be logged on this file
+SELLLOGFILE=".sell.log"
+#All user alerts will be logged on this file
+ALERTLOGFILE=".alert.log"
 
 #Configuration file
 CONFIG_FILE=".mbc.conf"
@@ -552,6 +558,169 @@ function checkTimeToBuy {
 
 }
 
+#Open an interative mode
+function interativeMode {
+
+
+        #Start CLI menu
+        while true ; do
+                #flag to ensure all inputed numbers are numbers type
+                isNUM=true
+
+                clear
+                echo "#################### MBC ADMIN ####################"
+                echo "#                                                 #"
+                echo "#  1 - Enable SELL's alerts for all currencies    #"
+                echo "#  2 - Set up a new value to LAST SELL            #"
+                echo "#  3 - Shows 10 last lines from log file          #"
+                echo "#  4 - Shows 10 last buy operations               #"
+                echo "#  5 - Shows 10 last sell operation               #"
+                echo "#  6 - Shows 10 last alerts sent by email         #"
+                echo "#  7 - Exit                                       #"
+                echo "###################################################"
+                echo -n "Choose an option number:"
+                read OPTMENU
+                echo $OPTMENU | grep -q -v "[^0-9]"
+
+                if [ $? -ne 0 ];then
+                        isNUM=false
+                fi
+
+                if [ isNUM ];then
+                        case $OPTMENU in
+                                1)clear
+                                echo "#################### MBC ADMIN ####################"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#   Alerts have been enabled for all currencies   #"
+                                echo "#       Press ENTER to go back to main menu       #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "###################################################"
+                                echo -n ""
+                                read OPTMENU;;
+
+                                2)clear
+                                echo "#################### MBC ADMIN ####################"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#    Input last sell prices for each currency     #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "###################################################"
+                                echo -n "BCH last sell price (Eg.: 0.12345678)     =>"
+                                read BCH_R_LAST_SELL
+
+                                echo -n "BTC last sell price (Eg.: 0.12345678)     =>"
+                                read BTC_R_LAST_SELL
+
+                                echo -n "CHZ last sell price (Eg.: 0.12345678)     =>"
+                                read CHZ_R_LAST_SELL
+
+                                echo -n "ETH last sell price (Eg.: 0.12345678)     =>"
+                                read ETH_R_LAST_SELL
+
+                                echo -n "LTC last sell price (Eg.: 0.12345678)     =>"
+                                read LTC_R_LAST_SELL
+
+                                clear
+                                echo "#################### MBC ADMIN ####################"
+                                echo "#                                                 "
+                                echo "#         LAST SELL PRICES HAVE BEEN SETUP        "
+                                echo "#   (BCH):$BCH_R_LAST_SELL                        "
+                                echo "#   (BTC):$BTC_R_LAST_SELL                        "
+                                echo "#   (CHZ):$CHZ_R_LAST_SELL                        "
+                                echo "#   (ETH):$ETH_R_LAST_SELL                        "
+                                echo "#   (LTC):$LTC_R_LAST_SELL                        "
+                                echo "#       Press ENTER to go back to main menu       "
+                                echo "###################################################"
+                                echo -n ""
+                                read OPTMENU;;
+
+                                3)clear
+                                echo "#################### MBC ADMIN ####################"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#       Showing 10 last lines from log file       #"
+                                echo "#       Press ENTER to go back to main menu       #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "###################################################"
+                                tail -10 ${LOGFILE}
+                                echo -n ""
+                                read OPTMENU;;
+
+                                4)clear
+                                echo "#################### MBC ADMIN ####################"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#     Showing 10 last lines from buy log file     #"
+                                echo "#       Press ENTER to go back to main menu       #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "###################################################"
+                                tail -10 ${BUYLOGFILE}
+                                echo -n ""
+                                read OPTMENU;;
+
+                                5)clear
+                                echo "#################### MBC ADMIN ####################"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#      Showing 10 last lines from sell log file   #"
+                                echo "#       Press ENTER to go back to main menu       #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "###################################################"
+                                tail -10 ${SELLLOGFILE}
+                                echo -n ""
+                                read OPTMENU;;
+
+                                6)clear
+                                echo "#################### MBC ADMIN ####################"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#    Showing 10 last lines from alerts log file   #"
+                                echo "#       Press ENTER to go back to main menu       #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "###################################################"
+                                tail -10 ${ALERTLOGFILE}
+                                echo -n ""
+                                read OPTMENU;;
+
+                                7)break;;
+
+                                *)clear
+                                echo "#################### MBC ADMIN ####################"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#               Invalid option!                   #"
+                                echo "#       Press ENTER to go back to main menu       #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "#                                                 #"
+                                echo "###################################################"
+                                echo -n ""
+                                read OPTMENU;;
+                        esac
+                fi
+        done
+}
 
 
 
@@ -602,17 +771,13 @@ elif [ "${1}" = "menu" ]; then
         #check if config file exists to load all its variables values or create a new one.
         initialSetup
 
-        #- Enable/Disable SELL's alerts
-
-        #- Set up a new value to LAST_SELL
-
-        #- Shows 10 last lines from log file
-
-        #- Shows 10 last buy operations
-
-        #- Shows 10 last sell operations
-
-        #- Shows 10 last alerts sent by email
+        #1- Enable/Disable SELL's alerts
+        #2- Set up a new value to LAST_SELL
+        #3- Shows 10 last lines from log file
+        #4- Shows 10 last buy operations
+        #5- Shows 10 last sell operations
+        #6- Shows 10 last alerts sent by email
+        interativeMode
 
         exit 0
 elif [ "${1}" = "buy" ] && [ ! -z "${2}" ] && [ ! -z "${3}" ]  && [ ! -z "${4}" ]; then
