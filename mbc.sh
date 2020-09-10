@@ -600,6 +600,27 @@ function interativeMode {
                                 echo "#                                                 #"
                                 echo "###################################################"
                                 echo -n ""
+                                
+                                #update JSON value
+                                JSON_UPDATE=`jq --arg flagalert "${BCH_FLAG_ALERT}" '.mbc.currency.bch.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                                echo $JSON_UPDATE > ${CONFIG_FILE}
+                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`BCH Flag alert has been enabled by user."   >> ${LOGFILE}
+                                
+                                JSON_UPDATE=`jq --arg flagalert "${BTC_FLAG_ALERT}" '.mbc.currency.btc.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                                echo $JSON_UPDATE > ${CONFIG_FILE}
+                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`BTC Flag alert has been enabled by user."   >> ${LOGFILE}
+
+                                JSON_UPDATE=`jq --arg flagalert "${CHZ_FLAG_ALERT}" '.mbc.currency.chz.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                                echo $JSON_UPDATE > ${CONFIG_FILE}
+                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`CHZ Flag alert has been enabled by user."   >> ${LOGFILE}
+
+                                JSON_UPDATE=`jq --arg flagalert "${ETH_FLAG_ALERT}" '.mbc.currency.eth.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                                echo $JSON_UPDATE > ${CONFIG_FILE}
+                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`ETH Flag alert has been enabled by user."   >> ${LOGFILE}
+
+                                JSON_UPDATE=`jq --arg flagalert "${LTC_FLAG_ALERT}" '.mbc.currency.ltc.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                                echo $JSON_UPDATE > ${CONFIG_FILE}
+                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`LTC Flag alert has been enabled by user."   >> ${LOGFILE}
                                 read OPTMENU;;
 
                                 2)clear
@@ -639,6 +660,26 @@ function interativeMode {
                                 echo "#   (LTC):$LTC_R_LAST_SELL                        "
                                 echo "#       Press ENTER to go back to main menu       "
                                 echo "###################################################"
+                                JSON_UPDATE=`jq --arg rlastsell "${BCH_R_LAST_SELL}" '.mbc.currency.bch.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                                echo $JSON_UPDATE > ${CONFIG_FILE}
+                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`[BCH] The last sell price useded as reference has been changed with success."   >> ${LOGFILE}
+
+                                JSON_UPDATE=`jq --arg rlastsell "${BTC_R_LAST_SELL}" '.mbc.currency.btc.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                                echo $JSON_UPDATE > ${CONFIG_FILE}
+                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`[BTC] The last sell price useded as reference has been changed with success."   >> ${LOGFILE}
+
+                                JSON_UPDATE=`jq --arg rlastsell "${CHZ_R_LAST_SELL}" '.mbc.currency.chz.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                                echo $JSON_UPDATE > ${CONFIG_FILE}
+                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`[CHZ] The last sell price useded as reference has been changed with success."   >> ${LOGFILE}
+
+                                JSON_UPDATE=`jq --arg rlastsell "${ETH_R_LAST_SELL}" '.mbc.currency.eth.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                                echo $JSON_UPDATE > ${CONFIG_FILE}
+                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`[ETH] The last sell price useded as reference has been changed with success."   >> ${LOGFILE}
+
+                                JSON_UPDATE=`jq --arg rlastsell "${LTC_R_LAST_SELL}" '.mbc.currency.ltc.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                                echo $JSON_UPDATE > ${CONFIG_FILE}
+                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`[LTC] The last sell price useded as reference has been changed with success."   >> ${LOGFILE}
+
                                 echo -n ""
                                 read OPTMENU;;
 
