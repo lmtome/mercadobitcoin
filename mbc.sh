@@ -74,6 +74,14 @@ LTC_R_LAST_SELL=0
 LTC_TOTAL_LAST_SELL=0
 LTC_FLAG_ALERT=1
 
+
+echo "INITIAL VALUES"
+echo "BCH_FLAG_ALERT=$BCH_FLAG_ALERT"
+echo "BTC_FLAG_ALERT=$BTC_FLAG_ALERT"
+echo "CHZ_FLAG_ALERT=$CHZ_FLAG_ALERT"
+echo "ETH_FLAG_ALERT=$ETH_FLAG_ALERT"
+echo "LTC_FLAG_ALERT=$LTC_FLAG_ALERT"
+
 #Consider it's the first time user is running the script
 FLAG_FIRST_TIME=1
 
@@ -189,6 +197,13 @@ function loadConfigFile {
                 #ADMIN
                 FLAG_FIRST_TIME=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.adminconfig.flagfirsttime'`
 
+echo "loadConfigFile"
+echo "BCH_FLAG_ALERT=$BCH_FLAG_ALERT"
+echo "BTC_FLAG_ALERT=$BTC_FLAG_ALERT"
+echo "CHZ_FLAG_ALERT=$CHZ_FLAG_ALERT"
+echo "ETH_FLAG_ALERT=$ETH_FLAG_ALERT"
+echo "LTC_FLAG_ALERT=$LTC_FLAG_ALERT"
+
 }
 
 #OK Check if config file exists, if so script reads config file and load automation variables. if not, scripts brings a prompt to input manually.
@@ -263,44 +278,6 @@ function initialSetup {
 
                 #Read config file and set up each currency reference price
                 loadConfigFile
-
-                #These variables will be showed after to be loaded from config file
-                echo "BCH_QTY=${BCH_QTY}" >> ${LOGFILE}
-                echo "BCH_PRICE=${BCH_PRICE}" >> ${LOGFILE}
-                echo "BCH_TOTAL_PRICE=${BCH_TOTAL_PRICE}" >> ${LOGFILE}
-                echo "BCH_R_LAST_SELL=${BCH_R_LAST_SELL}" >> ${LOGFILE}
-                echo "BCH_TOTAL_LAST_SELL=${BCH_TOTAL_LAST_SELL}" >> ${LOGFILE}
-                echo "BCH_FLAG_ALERT=${BCH_FLAG_ALERT}" >> ${LOGFILE}
-                echo "" >> ${LOGFILE}
-                echo "BTC_QTY=${BTC_QTY}" >> ${LOGFILE}
-                echo "BTC_PRICE=${BTC_PRICE}" >> ${LOGFILE}
-                echo "BTC_TOTAL_PRICE=${BTC_TOTAL_PRICE}" >> ${LOGFILE}
-                echo "BTC_R_LAST_SELL=${BTC_R_LAST_SELL}" >> ${LOGFILE}
-                echo "BTC_TOTAL_LAST_SELL=${BTC_TOTAL_LAST_SELL}" >> ${LOGFILE}
-                echo "BTC_FLAG_ALERT=${BTC_FLAG_ALERT}" >> ${LOGFILE}
-                echo "" >> ${LOGFILE}
-                echo "CHZ_QTY=${CHZ_QTY}" >> ${LOGFILE}
-                echo "CHZ_PRICE=${CHZ_PRICE}" >> ${LOGFILE}
-                echo "CHZ_TOTAL_PRICE=${CHZ_TOTAL_PRICE}" >> ${LOGFILE}
-                echo "CHZ_R_LAST_SELL=${CHZ_R_LAST_SELL}" >> ${LOGFILE}
-                echo "CHZ_TOTAL_LAST_SELL=${CHZ_TOTAL_LAST_SELL}" >> ${LOGFILE}
-                echo "CHZ_FLAG_ALERT=${CHZ_FLAG_ALERT}" >> ${LOGFILE}
-                echo "" >> ${LOGFILE}
-                echo "ETH_QTY=${ETH_QTY}" >> ${LOGFILE}
-                echo "ETH_PRICE=${ETH_PRICE}" >> ${LOGFILE}
-                echo "ETH_TOTAL_PRICE=${ETH_TOTAL_PRICE}" >> ${LOGFILE}
-                echo "ETH_R_LAST_SELL=${ETH_R_LAST_SELL}" >> ${LOGFILE}
-                echo "ETH_TOTAL_LAST_SELL=${ETH_TOTAL_LAST_SELL}" >> ${LOGFILE}
-                echo "ETH_FLAG_ALERT=${ETH_FLAG_ALERT}" >> ${LOGFILE}
-                echo "" >> ${LOGFILE}
-                echo "LTC_QTY=${LTC_QTY}" >> ${LOGFILE}
-                echo "LTC_PRICE=${LTC_PRICE}" >> ${LOGFILE}
-                echo "LTC_TOTAL_PRICE=${LTC_TOTAL_PRICE}" >> ${LOGFILE}
-                echo "LTC_R_LAST_SELL=${LTC_R_LAST_SELL}" >> ${LOGFILE}
-                echo "LTC_TOTAL_LAST_SELL=${LTC_TOTAL_LAST_SELL}" >> ${LOGFILE}
-                echo "LTC_FLAG_ALERT=${LTC_FLAG_ALERT}" >> ${LOGFILE}
-                echo "" >> ${LOGFILE}
-                echo "FLAG_FIRST_TIME=${FLAG_FIRST_TIME}" >> ${LOGFILE}
         fi
 }
 
@@ -325,7 +302,7 @@ function checkNewPricesUpdates {
 
         #CHZ
         CHZ_LAST_PRICE=`curl -s https://www.mercadobitcoin.net/api/CHZ/ticker | jq --raw-output '.ticker.last'`
-        $CHZ_LAST_PRICE=$( printf "%.8f" $CHZ_LAST_PRICE )
+        CHZ_LAST_PRICE=$( printf "%.8f" $CHZ_LAST_PRICE )
 
         #ETH
         ETH_LAST_PRICE=`curl -s https://www.mercadobitcoin.net/api/ETH/ticker | jq --raw-output '.ticker.last'`
@@ -341,6 +318,10 @@ function checkNewPricesUpdates {
 #checkTimeToSell ${BCH_R_LAST_SELL} ${BCH_LAST_PRICE} "BCH"
 function checkTimeToSell {
 
+echo "BCH_R_LAST_SELL=${1}"
+echo "BCH_LAST_PRICE=${2}"
+echo "CURRENCY=${3}"
+
         #R_LAST_SELL_GP is reference price + 3% of gross profit...
         R_LAST_SELL_GP=`bc <<< "scale=2;(${1}+(${GROSS_PROFIT_PERC}/100)*${1})"`
         R_LAST_SELL_GP=$( printf "%.8f" $R_LAST_SELL_GP )
@@ -348,8 +329,18 @@ function checkTimeToSell {
         #...and last price must be iqual or greater than the reference price + 3% of gross profit to alert the user: Sell time!!!
         FLAG_SELL_TIME=`echo ${2}'>'${R_LAST_SELL_GP} | bc -l`
 
+echo "R_LAST_SELL_GP=$R_LAST_SELL_GP"
+echo "FLAG_SELL_TIME=$FLAG_SELL_TIME"
+
         #TRUE for LAST PRICE IS GREATER THAN R_LAST_SELL(3% above)
         if [ ${FLAG_SELL_TIME} -ne 0 ];then
+echo "checkTimeToSell BEFORE"
+echo "BCH_FLAG_ALERT=$BCH_FLAG_ALERT"
+echo "BTC_FLAG_ALERT=$BTC_FLAG_ALERT"
+echo "CHZ_FLAG_ALERT=$CHZ_FLAG_ALERT"
+echo "ETH_FLAG_ALERT=$ETH_FLAG_ALERT"
+echo "LTC_FLAG_ALERT=$LTC_FLAG_ALERT"
+
                 #Alert user
                 if [ ${BCH_FLAG_ALERT} -eq 1 ];then
                         alertUser "dwulbr@gmail.com" "Subject: ${3} last price is currently 3% above of ${3} R LAST SELL"
@@ -414,6 +405,13 @@ function checkTimeToSell {
                 #Last value does not reach 3% above of reference price for ${3} crypto currency."
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Last price is not 3% above of ${3} R LAST SELL."   >> ${LOGFILE}
         fi
+echo "checkTimeToSell AFTER"
+echo "BCH_FLAG_ALERT=$BCH_FLAG_ALERT"
+echo "BTC_FLAG_ALERT=$BTC_FLAG_ALERT"
+echo "CHZ_FLAG_ALERT=$CHZ_FLAG_ALERT"
+echo "ETH_FLAG_ALERT=$ETH_FLAG_ALERT"
+echo "LTC_FLAG_ALERT=$LTC_FLAG_ALERT"
+
 }
 
 
@@ -595,12 +593,40 @@ elif [ "${1}" = "scan" ]; then
    #Works in loop checking checking and comparing with new prices
    while true ; do
         echo "SCAN"
+echo "SCAN BEFORE"
+echo "BCH_FLAG_ALERT=$BCH_FLAG_ALERT"
+echo "BTC_FLAG_ALERT=$BTC_FLAG_ALERT"
+echo "CHZ_FLAG_ALERT=$CHZ_FLAG_ALERT"
+echo "ETH_FLAG_ALERT=$ETH_FLAG_ALERT"
+echo "LTC_FLAG_ALERT=$LTC_FLAG_ALERT"
 
         #check if config file exists to load all its variables values or create a new one.
         loadConfigFile
 
+echo "SCAN AFTER"
+echo "BCH_FLAG_ALERT=$BCH_FLAG_ALERT"
+echo "BTC_FLAG_ALERT=$BTC_FLAG_ALERT"
+echo "CHZ_FLAG_ALERT=$CHZ_FLAG_ALERT"
+echo "ETH_FLAG_ALERT=$ETH_FLAG_ALERT"
+echo "LTC_FLAG_ALERT=$LTC_FLAG_ALERT"
+
+
+
+echo "NEW PRICES BEFORE"
+echo "BCH_LAST_PRICE=$BCH_LAST_PRICE"
+echo "BTC_LAST_PRICE=$BTC_LAST_PRICE"
+echo "CHZ_LAST_PRICE=$CHZ_LAST_PRICE"
+echo "ETH_LAST_PRICE=$ETH_LAST_PRICE"
+echo "LTC_LAST_PRICE=$LTC_LAST_PRICE"
+
         #Load LAST_PRICE from Mecardobitcoin website API
         checkNewPricesUpdates
+echo "NEW PRICES AFTER"
+echo "BCH_LAST_PRICE=$BCH_LAST_PRICE"
+echo "BTC_LAST_PRICE=$BTC_LAST_PRICE"
+echo "CHZ_LAST_PRICE=$CHZ_LAST_PRICE"
+echo "ETH_LAST_PRICE=$ETH_LAST_PRICE"
+echo "LTC_LAST_PRICE=$LTC_LAST_PRICE"
 
         #Compare each LAST_PRICE with R_LAST_SELL of each crypto currency. If it's 3% above an alert by email is sent just once.
         checkTimeToSell ${BCH_R_LAST_SELL} ${BCH_LAST_PRICE} "BCH"
@@ -610,7 +636,7 @@ elif [ "${1}" = "scan" ]; then
         checkTimeToSell ${LTC_R_LAST_SELL} ${LTC_LAST_PRICE} "LTC"
 
         #Wait 5 seconds by default before start the loop again.
-        sleep ${WAITIING}
+        sleep ${WAITING}
    done
 
 elif [ "${1}" = "menu" ]; then
