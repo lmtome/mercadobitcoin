@@ -75,13 +75,6 @@ LTC_TOTAL_LAST_SELL=0
 LTC_FLAG_ALERT=1
 
 
-echo "INITIAL VALUES"
-echo "BCH_FLAG_ALERT=$BCH_FLAG_ALERT"
-echo "BTC_FLAG_ALERT=$BTC_FLAG_ALERT"
-echo "CHZ_FLAG_ALERT=$CHZ_FLAG_ALERT"
-echo "ETH_FLAG_ALERT=$ETH_FLAG_ALERT"
-echo "LTC_FLAG_ALERT=$LTC_FLAG_ALERT"
-
 #Consider it's the first time user is running the script
 FLAG_FIRST_TIME=1
 
@@ -197,13 +190,6 @@ function loadConfigFile {
                 #ADMIN
                 FLAG_FIRST_TIME=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.adminconfig.flagfirsttime'`
 
-echo "loadConfigFile"
-echo "BCH_FLAG_ALERT=$BCH_FLAG_ALERT"
-echo "BTC_FLAG_ALERT=$BTC_FLAG_ALERT"
-echo "CHZ_FLAG_ALERT=$CHZ_FLAG_ALERT"
-echo "ETH_FLAG_ALERT=$ETH_FLAG_ALERT"
-echo "LTC_FLAG_ALERT=$LTC_FLAG_ALERT"
-
 }
 
 #OK Check if config file exists, if so script reads config file and load automation variables. if not, scripts brings a prompt to input manually.
@@ -318,9 +304,6 @@ function checkNewPricesUpdates {
 #checkTimeToSell ${BCH_R_LAST_SELL} ${BCH_LAST_PRICE} "BCH"
 function checkTimeToSell {
 
-echo "BCH_R_LAST_SELL=${1}"
-echo "BCH_LAST_PRICE=${2}"
-echo "CURRENCY=${3}"
 
         #R_LAST_SELL_GP is reference price + 3% of gross profit...
         R_LAST_SELL_GP=`bc <<< "scale=2;(${1}+(${GROSS_PROFIT_PERC}/100)*${1})"`
@@ -329,75 +312,84 @@ echo "CURRENCY=${3}"
         #...and last price must be iqual or greater than the reference price + 3% of gross profit to alert the user: Sell time!!!
         FLAG_SELL_TIME=`echo ${2}'>'${R_LAST_SELL_GP} | bc -l`
 
-echo "R_LAST_SELL_GP=$R_LAST_SELL_GP"
-echo "FLAG_SELL_TIME=$FLAG_SELL_TIME"
-
         #TRUE for LAST PRICE IS GREATER THAN R_LAST_SELL(3% above)
         if [ ${FLAG_SELL_TIME} -ne 0 ];then
-echo "checkTimeToSell BEFORE"
-echo "BCH_FLAG_ALERT=$BCH_FLAG_ALERT"
-echo "BTC_FLAG_ALERT=$BTC_FLAG_ALERT"
-echo "CHZ_FLAG_ALERT=$CHZ_FLAG_ALERT"
-echo "ETH_FLAG_ALERT=$ETH_FLAG_ALERT"
-echo "LTC_FLAG_ALERT=$LTC_FLAG_ALERT"
 
-                #Alert user
-                if [ ${BCH_FLAG_ALERT} -eq 1 ];then
-                        alertUser "dwulbr@gmail.com" "Subject: ${3} last price is currently 3% above of ${3} R LAST SELL"
-                fi
 
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} last price is currently 3% above of ${3} R LAST SELL"   >> ${LOGFILE}
 
                 if [ "${3}" == "BCH" ];then
-                        #Disable alert for BCH coin
-                        BCH_FLAG_ALERT=0
+                        #Alert user
+                        if [ ${BCH_FLAG_ALERT} -eq 1 ];then
+                                alertUser "dwulbr@gmail.com" "Subject: ${3} last price is currently 3% above of ${3} R LAST SELL"
 
-                        #update JSON value
-                        JSON_UPDATE=`jq --arg flagalert "${BCH_FLAG_ALERT}" '.mbc.currency.bch.sell.flagalert = $flagalert' ${CONFIG_FILE}`
-                        echo $JSON_UPDATE > ${CONFIG_FILE}
-                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} Flag alert has been disabled."   >> ${LOGFILE}
+                                #Disable alert for BCH coin
+                                BCH_FLAG_ALERT=0
+
+                                #update JSON value
+                                JSON_UPDATE=`jq --arg flagalert "${BCH_FLAG_ALERT}" '.mbc.currency.bch.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                                echo $JSON_UPDATE > ${CONFIG_FILE}
+                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} Flag alert has been disabled."   >> ${LOGFILE}
+                        fi
 
                 elif [ "${3}" == "BTC" ];then
-                        #Disable alert for BTC coin
-                        BTC_FLAG_ALERT=0
+                        #Alert user
+                        if [ ${BTC_FLAG_ALERT} -eq 1 ];then
+                                alertUser "dwulbr@gmail.com" "Subject: ${3} last price is currently 3% above of ${3} R LAST SELL"
 
-                        #update JSON value
-                        JSON_UPDATE=`jq --arg flagalert "${BTC_FLAG_ALERT}" '.mbc.currency.btc.sell.flagalert = $flagalert' ${CONFIG_FILE}`
-                        echo $JSON_UPDATE > ${CONFIG_FILE}
-                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} Flag alert has been disabled."   >> ${LOGFILE}
+                                #Disable alert for BTC coin
+                                BTC_FLAG_ALERT=0
 
+                                #update JSON value
+                                JSON_UPDATE=`jq --arg flagalert "${BTC_FLAG_ALERT}" '.mbc.currency.btc.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                                echo $JSON_UPDATE > ${CONFIG_FILE}
+                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} Flag alert has been disabled."   >> ${LOGFILE}
+                        fi
 
                 elif [ "${3}" == "CHZ" ];then
-                        #Disable alert for CHZ coin
-                        CHZ_FLAG_ALERT=0
+                        #Alert user
+                        if [ ${CHZ_FLAG_ALERT} -eq 1 ];then
+                                alertUser "dwulbr@gmail.com" "Subject: ${3} last price is currently 3% above of ${3} R LAST SELL"
+
+                                #Disable alert for CHZ coin
+                                CHZ_FLAG_ALERT=0
 
 
-                        #update JSON value
-                        JSON_UPDATE=`jq --arg flagalert "${CHZ_FLAG_ALERT}" '.mbc.currency.chz.sell.flagalert = $flagalert' ${CONFIG_FILE}`
-                        echo $JSON_UPDATE > ${CONFIG_FILE}
-                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} Flag alert has been disabled."   >> ${LOGFILE}
-
+                                #update JSON value
+                                JSON_UPDATE=`jq --arg flagalert "${CHZ_FLAG_ALERT}" '.mbc.currency.chz.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                                echo $JSON_UPDATE > ${CONFIG_FILE}
+                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} Flag alert has been disabled."   >> ${LOGFILE}
+                        fi
 
                 elif [ "${3}" == "ETH" ];then
-                        #Disable alert for ETH coin
-                        ETH_FLAG_ALERT=0
+                        #Alert user
+                        if [ ${ETH_FLAG_ALERT} -eq 1 ];then
+                                alertUser "dwulbr@gmail.com" "Subject: ${3} last price is currently 3% above of ${3} R LAST SELL"
+
+                                #Disable alert for ETH coin
+                                ETH_FLAG_ALERT=0
 
 
-                        #update JSON value
-                        JSON_UPDATE=`jq --arg flagalert "${ETH_FLAG_ALERT}" '.mbc.currency.eth.sell.flagalert = $flagalert' ${CONFIG_FILE}`
-                        echo $JSON_UPDATE > ${CONFIG_FILE}
-                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} Flag alert has been disabled."   >> ${LOGFILE}
-
+                                #update JSON value
+                                JSON_UPDATE=`jq --arg flagalert "${ETH_FLAG_ALERT}" '.mbc.currency.eth.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                                echo $JSON_UPDATE > ${CONFIG_FILE}
+                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} Flag alert has been disabled."   >> ${LOGFILE}
+                        fi
 
                 elif [ "${3}" == "LTC" ];then
-                        #Disable alert for LTC coin
-                        LTC_FLAG_ALERT=0
+                        #Alert user
+                        if [ ${LTC_FLAG_ALERT} -eq 1 ];then
+                                alertUser "dwulbr@gmail.com" "Subject: ${3} last price is currently 3% above of ${3} R LAST SELL"
+
+                                #Disable alert for LTC coin
+                                LTC_FLAG_ALERT=0
 
 
-                        #update JSON value
-                        JSON_UPDATE=`jq --arg flagalert "${LTC_FLAG_ALERT}" '.mbc.currency.ltc.sell.flagalert = $flagalert' ${CONFIG_FILE}`
-                        echo $JSON_UPDATE > ${CONFIG_FILE}
-                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} Flag alert has been disabled."   >> ${LOGFILE}
+                                #update JSON value
+                                JSON_UPDATE=`jq --arg flagalert "${LTC_FLAG_ALERT}" '.mbc.currency.ltc.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                                echo $JSON_UPDATE > ${CONFIG_FILE}
+                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} Flag alert has been disabled."   >> ${LOGFILE}
+                        fi
                 else
                         echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} is a invalid crypto currency."   >> ${LOGFILE}
                 fi
@@ -405,12 +397,6 @@ echo "LTC_FLAG_ALERT=$LTC_FLAG_ALERT"
                 #Last value does not reach 3% above of reference price for ${3} crypto currency."
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Last price is not 3% above of ${3} R LAST SELL."   >> ${LOGFILE}
         fi
-echo "checkTimeToSell AFTER"
-echo "BCH_FLAG_ALERT=$BCH_FLAG_ALERT"
-echo "BTC_FLAG_ALERT=$BTC_FLAG_ALERT"
-echo "CHZ_FLAG_ALERT=$CHZ_FLAG_ALERT"
-echo "ETH_FLAG_ALERT=$ETH_FLAG_ALERT"
-echo "LTC_FLAG_ALERT=$LTC_FLAG_ALERT"
 
 }
 
@@ -593,40 +579,12 @@ elif [ "${1}" = "scan" ]; then
    #Works in loop checking checking and comparing with new prices
    while true ; do
         echo "SCAN"
-echo "SCAN BEFORE"
-echo "BCH_FLAG_ALERT=$BCH_FLAG_ALERT"
-echo "BTC_FLAG_ALERT=$BTC_FLAG_ALERT"
-echo "CHZ_FLAG_ALERT=$CHZ_FLAG_ALERT"
-echo "ETH_FLAG_ALERT=$ETH_FLAG_ALERT"
-echo "LTC_FLAG_ALERT=$LTC_FLAG_ALERT"
 
         #check if config file exists to load all its variables values or create a new one.
         loadConfigFile
 
-echo "SCAN AFTER"
-echo "BCH_FLAG_ALERT=$BCH_FLAG_ALERT"
-echo "BTC_FLAG_ALERT=$BTC_FLAG_ALERT"
-echo "CHZ_FLAG_ALERT=$CHZ_FLAG_ALERT"
-echo "ETH_FLAG_ALERT=$ETH_FLAG_ALERT"
-echo "LTC_FLAG_ALERT=$LTC_FLAG_ALERT"
-
-
-
-echo "NEW PRICES BEFORE"
-echo "BCH_LAST_PRICE=$BCH_LAST_PRICE"
-echo "BTC_LAST_PRICE=$BTC_LAST_PRICE"
-echo "CHZ_LAST_PRICE=$CHZ_LAST_PRICE"
-echo "ETH_LAST_PRICE=$ETH_LAST_PRICE"
-echo "LTC_LAST_PRICE=$LTC_LAST_PRICE"
-
         #Load LAST_PRICE from Mecardobitcoin website API
         checkNewPricesUpdates
-echo "NEW PRICES AFTER"
-echo "BCH_LAST_PRICE=$BCH_LAST_PRICE"
-echo "BTC_LAST_PRICE=$BTC_LAST_PRICE"
-echo "CHZ_LAST_PRICE=$CHZ_LAST_PRICE"
-echo "ETH_LAST_PRICE=$ETH_LAST_PRICE"
-echo "LTC_LAST_PRICE=$LTC_LAST_PRICE"
 
         #Compare each LAST_PRICE with R_LAST_SELL of each crypto currency. If it's 3% above an alert by email is sent just once.
         checkTimeToSell ${BCH_R_LAST_SELL} ${BCH_LAST_PRICE} "BCH"
