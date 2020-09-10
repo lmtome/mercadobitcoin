@@ -13,6 +13,77 @@
 #
 #####################
 
+###########################################
+#
+# Variables
+#
+###########################################
+
+#Log file name y default
+LOGFILE="mbc.log"
+
+#Configuration file
+CONFIG_FILE=".mbc.conf"
+
+#Time in seconds before check prices again
+WAITING=10
+
+#Mercado Bitcoin tax % or in R$
+GROSS_PROFIT_PERC=3
+
+#These variables will be loaded from confog file
+BCH_QTY=0
+BCH_PRICE=0
+BCH_TOTAL_PRICE=0
+BCH_R_LAST_SELL=0
+BCH_TOTAL_LAST_SELL=0
+BCH_FLAG_ALERT=1
+
+BTC_QTY=0
+BTC_PRICE=0
+BTC_TOTAL_PRICE=0
+#SELL0
+BTC_R_LAST_SELL=0
+BTC_TOTAL_LAST_SELL=0
+BTC_FLAG_ALERT=1
+
+#BUY
+CHZ_QTY=0
+CHZ_PRICE=0
+CHZ_TOTAL_PRICE=0
+#SELL
+CHZ_R_LAST_SELL=0
+CHZ_TOTAL_LAST_SELL=0
+CHZ_FLAG_ALERT=1
+
+#BUY
+ETH_QTY=0
+ETH_PRICE=0
+ETH_TOTAL_PRICE=0
+#SELL
+ETH_R_LAST_SELL=0
+ETH_TOTAL_LAST_SELL=0
+ETH_FLAG_ALERT=1
+
+#BUY
+LTC_QTY=0
+LTC_PRICE=0
+LTC_TOTAL_PRICE=0
+#SELL
+LTC_R_LAST_SELL=0
+LTC_TOTAL_LAST_SELL=0
+LTC_FLAG_ALERT=1
+
+#Consider it's the first time user is running the script
+FLAG_FIRST_TIME=1
+
+#Initialization of all LAST prices variables
+BCH_LAST_PRICE=0
+BTC_LAST_PRICE=0
+CHZ_LAST_PRICE=0
+ETH_LAST_PRICE=0
+LTC_LAST_PRICE=0
+
 
 ###########################################
 #
@@ -20,34 +91,221 @@
 #
 ###########################################
 
+#OK This function is called always the user does not choose an expected option and shows the script usage.
+function usageScript {
+        echo "Usage: ${0} [ -h | scan | menu | [ buy | sell ] <BCH|BTC|CHZ|ETH|LTC> <qty> <price> ]"
+        echo ""
+        echo "-h           show the command usage."
+        echo ""
+        echo "scan - check for good prices to buy one of these crypto currencies below: "
+        echo "BCH : Bitcoin Cash"
+        echo "BTC : Bitcoin"
+        echo "CHZ : Chiliz"
+        echo "ETH : Ethereum"
+        echo "LTC : Litecoin"
+        echo ""
+        echo "menu - Interative mode useful to speed up set up process and extract reports."
+        echo ""
+        echo "buy - Set up the system with new crypto currency user has bought."
+        echo ""
+        echo "sell - Set up the system with new crypto currency user has sold."
+        echo ""
+        exit 2
+}
 
-#Function to Alert users about script expecting their action to keep going
-#Just to ensure email will works properly follow the instruction to prepare your Linux env:
-#Install it with the following commands:
-#
-#sudo apt-get update
-#sudo apt-get install ssmtp
-#
-#Edit /etc/ssmtp/ssmtp.conf to look like this:
-#
-#root=rpi3abc@gmail.com
-#mailhub=smtp.gmail.com:465
-#FromLineOverride=YES
-#AuthUser=rpi3abc@gmail.com
-#AuthPass=testing123
-#UseTLS=YES
-#
-#
-#when you have not allowed access to less secure apps on your gmail. This security setting can be changed through the following link:
-#https://myaccount.google.com/lesssecureapps
-#
-#
-# Send an email trough command line
-# echo "Testing...1...2...3" | ssmtp myusername@gmail.com
-#
-#check your Gmail box
-#
-#It's enough!
+function loadConfigFile {
+
+                #Read config file and set up each currency reference price
+                #BUY
+                BCH_QTY=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.bch.buy.rqty'`
+                BCH_QTY=$( printf "%.8f" $BCH_QTY )
+                BCH_PRICE=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.bch.buy.rprice'`
+                BCH_PRICE=$( printf "%.8f" $BCH_PRICE )
+                BCH_TOTAL_PRICE=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.bch.buy.rtotalprice'`
+                BCH_TOTAL_PRICE=$( printf "%.8f" $BCH_TOTAL_PRICE )
+                #SELL
+                BCH_R_LAST_SELL=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.bch.sell.rlastsell'`
+                BCH_R_LAST_SELL=$( printf "%.8f" $BCH_R_LAST_SELL )
+                BCH_TOTAL_LAST_SELL=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.bch.sell.rtotallastsell'`
+                BCH_TOTAL_LAST_SELL=$( printf "%.8f" $BCH_TOTAL_LAST_SELL )
+                BCH_FLAG_ALERT=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.bch.sell.flagalert'`
+
+                #BUY
+                BTC_QTY=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.btc.buy.rqty'`
+                BTC_QTY=$( printf "%.8f" $BTC_QTY )
+                BTC_PRICE=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.btc.buy.rprice'`
+                BTC_PRICE=$( printf "%.8f" $BTC_PRICE )
+                BTC_TOTAL_PRICE=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.btc.buy.rtotalprice'`
+                BTC_TOTAL_PRICE=$( printf "%.8f" $BTC_TOTAL_PRICE )
+                #SELL
+                BTC_R_LAST_SELL=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.btc.sell.rlastsell'`
+                BTC_R_LAST_SELL=$( printf "%.8f" $BTC_R_LAST_SELL )
+                BTC_TOTAL_LAST_SELL=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.btc.sell.rtotallastsell'`
+                BTC_TOTAL_LAST_SELL=$( printf "%.8f" $BTC_TOTAL_LAST_SELL )
+                BTC_FLAG_ALERT=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.btc.sell.flagalert'`
+
+                #BUY
+                CHZ_QTY=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.chz.buy.rqty'`
+                CHZ_QTY=$( printf "%.8f" $CHZ_QTY )
+                CHZ_PRICE=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.chz.buy.rprice'`
+                CHZ_PRICE=$( printf "%.8f" $CHZ_PRICE )
+                CHZ_TOTAL_PRICE=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.chz.buy.rtotalprice'`
+                CHZ_TOTAL_PRICE=$( printf "%.8f" $CHZ_TOTAL_PRICE )
+                #SELL
+                CHZ_R_LAST_SELL=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.chz.sell.rlastsell'`
+                CHZ_R_LAST_SELL=$( printf "%.8f" $CHZ_R_LAST_SELL )
+                CHZ_TOTAL_LAST_SELL=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.chz.sell.rtotallastsell'`
+                CHZ_TOTAL_LAST_SELL=$( printf "%.8f" $CHZ_TOTAL_LAST_SELL )
+                CHZ_FLAG_ALERT=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.chz.sell.flagalert'`
+
+                #BUY
+                ETH_QTY=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.eth.buy.rqty'`
+                ETH_QTY=$( printf "%.8f" $ETH_QTY )
+                ETH_PRICE=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.eth.buy.rprice'`
+                ETH_PRICE=$( printf "%.8f" $ETH_PRICE )
+                ETH_TOTAL_PRICE=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.eth.buy.rtotalprice'`
+                ETH_TOTAL_PRICE=$( printf "%.8f" $ETH_TOTAL_PRICE )
+                #SELL
+                ETH_R_LAST_SELL=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.eth.sell.rlastsell'`
+                ETH_R_LAST_SELL=$( printf "%.8f" $ETH_R_LAST_SELL )
+                ETH_TOTAL_LAST_SELL=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.eth.sell.rtotallastsell'`
+                ETH_TOTAL_LAST_SELL=$( printf "%.8f" $ETH_TOTAL_LAST_SELL )
+                ETH_FLAG_ALERT=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.eth.sell.flagalert'`
+
+                #BUY
+                LTC_QTY=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.ltc.buy.rqty'`
+                LTC_QTY=$( printf "%.8f" $LTC_QTY )
+                LTC_PRICE=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.ltc.buy.rprice'`
+                LTC_PRICE=$( printf "%.8f" $LTC_PRICE )
+                LTC_TOTAL_PRICE=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.ltc.buy.rtotalprice'`
+                LTC_TOTAL_PRICE=$( printf "%.8f" $LTC_QTY )
+                #SELL
+                LTC_R_LAST_SELL=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.ltc.sell.rlastsell'`
+                LTC_R_LAST_SELL=$( printf "%.8f" $LTC_R_LAST_SELL )
+                LTC_TOTAL_LAST_SELL=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.ltc.sell.rtotallastsell'`
+                LTC_TOTAL_LAST_SELL=$( printf "%.8f" $LTC_TOTAL_LAST_SELL )
+                LTC_FLAG_ALERT=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.ltc.sell.flagalert'`
+
+                #ADMIN
+                FLAG_FIRST_TIME=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.adminconfig.flagfirsttime'`
+
+}
+
+#OK Check if config file exists, if so script reads config file and load automation variables. if not, scripts brings a prompt to input manually.
+function initialSetup {
+        if [ ! -f "${CONFIG_FILE}" ]; then
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`ERR: ${CONFIG_FILE} does not exist. Starting quiz to create one."  >> ${LOGFILE}
+
+                #set up a new conf file in JSON format
+                echo "Answer all questions needed for this automation runs properly:"
+
+                #BCH
+                echo "About BCH crypto currency:"
+                echo -n "What is the quantity? Please input only numbers. Eg.: 0.12345678  =>"
+                read BCH_QTY
+                BCH_QTY=$( printf "%.8f" $BCH_QTY )
+
+                echo -n "What is the price? Please input only numbers. Eg.: 0.12345678  =>"
+                read BCH_PRICE
+                BCH_PRICE=$( printf "%.8f" $BCH_PRICE )
+                BCH_TOTAL_PRICE=`bc <<< "scale=2;(${BCH_QTY}*${BCH_PRICE})"`
+                BCH_TOTAL_PRICE=$( printf "%.8f" $BCH_TOTAL_PRICE )
+
+                #BTC
+                echo "About BTC crypto currency:"
+                echo -n "What is the quantity? Please input only numbers. Eg.: 0.12345678  =>"
+                read BTC_QTY
+                BTC_QTY=$( printf "%.8f" $BTC_QTY )
+                echo -n "What is the price? Please input only numbers. Eg.: 0.12345678  =>"
+                read BTC_PRICE
+                BTC_PRICE=$( printf "%.8f" $BTC_PRICE )
+                BTC_TOTAL_PRICE=`bc <<< "scale=2;(${BTC_QTY}*${BTC_PRICE})"`
+                BTC_TOTAL_PRICE=$( printf "%.8f" $BTC_TOTAL_PRICE )
+
+                #CHZ
+                echo "About CHZ crypto currency:"
+                echo -n "What is the quantity? Please input only numbers. Eg.: 0.12345678  =>"
+                read CHZ_QTY
+                CHZ_QTY=$( printf "%.8f" $CHZ_QTY )
+                echo -n "What is the price? Please input only numbers. Eg.: 0.12345678  =>"
+                read CHZ_PRICE
+                CHZ_PRICE=$( printf "%.8f" $CHZ_PRICE )
+                CHZ_TOTAL_PRICE=`bc <<< "scale=2;(${CHZ_QTY}*${CHZ_PRICE})"`
+                CHZ_TOTAL_PRICE=$( printf "%.8f" $CHZ_TOTAL_PRICE )
+
+                #ETH
+                echo "About ETH crypto currency:"
+                echo -n "What is the quantity? Please input only numbers. Eg.: 0.12345678  =>"
+                read ETH_QTY
+                ETH_QTY=$( printf "%.8f" $ETH_QTY )
+                echo -n "What is the price? Please input only numbers. Eg.: 0.12345678  =>"
+                read ETH_PRICE
+                ETH_PRICE=$( printf "%.8f" $ETH_PRICE )
+                ETH_TOTAL_PRICE=`bc <<< "scale=2;(${ETH_QTY}*${ETH_PRICE})"`
+                ETH_TOTAL_PRICE=$( printf "%.8f" $ETH_TOTAL_PRICE )
+
+                #LTC
+                echo "About LTC crypto currency:"
+                echo -n "What is the quantity? Please input only numbers. Eg.: 0.12345678  =>"
+                read LTC_QTY
+                LTC_QTY=$( printf "%.8f" $LTC_QTY )
+                echo -n "What is the price? Please input only numbers. Eg.: 0.12345678  =>"
+                read LTC_PRICE
+                LTC_PRICE=$( printf "%.8f" $LTC_PRICE )
+                LTC_TOTAL_PRICE=`bc <<< "scale=2;(${LTC_QTY}*${LTC_PRICE})"`
+                LTC_TOTAL_PRICE=$( printf "%.8f" $LTC_TOTAL_PRICE )
+
+                #Save new data input by user
+                echo -e "{\"mbc\":{\"currency\":{\"bch\":{\"buy\":{\"rqty\":\"${BCH_QTY}\",\"rprice\":\"${BCH_PRICE}\",\"rtotalprice\":\"${BCH_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${BCH_PRICE}\",\"rtotallastsell\":\"${BCH_PRICE}\",\"flagalert\":\"1\"}},\"btc\":{\"buy\":{\"rqty\":\"${BTC_QTY}\",\"rprice\":\"${BTC_PRICE}\",\"rtotalprice\":\"${BTC_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${BTC_PRICE}\",\"rtotallastsell\":\"${BTC_PRICE}\",\"flagalert\":\"1\"}},\"chz\":{\"buy\":{\"rqty\":\"${CHZ_QTY}\",\"rprice\":\"${CHZ_PRICE}\",\"rtotalprice\":\"${CHZ_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${CHZ_PRICE}\",\"rtotallastsell\":\"${BCH_PRICE}\",\"flagalert\":\"1\"}},\"eth\":{\"buy\":{\"rqty\":\"${ETH_QTY}\",\"rprice\":\"${ETH_PRICE}\",\"rtotalprice\":\"${ETH_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${ETH_PRICE}\",\"rtotallastsell\":\"${ETH_PRICE}\",\"flagalert\":\"1\"}},\"ltc\":{\"buy\":{\"rqty\":\"${LTC_QTY}\",\"rprice\":\"${LTC_PRICE}\",\"rtotalprice\":\"${LTC_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${LTC_PRICE}\",\"rtotallastsell\":\"${LTC_PRICE}\",\"flagalert\":\"1\"}}},\"adminconfig\":{\"flagfirsttime\":\"0\"}}}" > ${CONFIG_FILE}
+
+        else
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Reading config file ${CONFIG_FILE}"   >> ${LOGFILE}
+
+                #Read config file and set up each currency reference price
+                loadConfigFile
+
+                #These variables will be showed after to be loaded from config file
+                echo "BCH_QTY=${BCH_QTY}" >> ${LOGFILE}
+                echo "BCH_PRICE=${BCH_PRICE}" >> ${LOGFILE}
+                echo "BCH_TOTAL_PRICE=${BCH_TOTAL_PRICE}" >> ${LOGFILE}
+                echo "BCH_R_LAST_SELL=${BCH_R_LAST_SELL}" >> ${LOGFILE}
+                echo "BCH_TOTAL_LAST_SELL=${BCH_TOTAL_LAST_SELL}" >> ${LOGFILE}
+                echo "BCH_FLAG_ALERT=${BCH_FLAG_ALERT}" >> ${LOGFILE}
+                echo "" >> ${LOGFILE}
+                echo "BTC_QTY=${BTC_QTY}" >> ${LOGFILE}
+                echo "BTC_PRICE=${BTC_PRICE}" >> ${LOGFILE}
+                echo "BTC_TOTAL_PRICE=${BTC_TOTAL_PRICE}" >> ${LOGFILE}
+                echo "BTC_R_LAST_SELL=${BTC_R_LAST_SELL}" >> ${LOGFILE}
+                echo "BTC_TOTAL_LAST_SELL=${BTC_TOTAL_LAST_SELL}" >> ${LOGFILE}
+                echo "BTC_FLAG_ALERT=${BTC_FLAG_ALERT}" >> ${LOGFILE}
+                echo "" >> ${LOGFILE}
+                echo "CHZ_QTY=${CHZ_QTY}" >> ${LOGFILE}
+                echo "CHZ_PRICE=${CHZ_PRICE}" >> ${LOGFILE}
+                echo "CHZ_TOTAL_PRICE=${CHZ_TOTAL_PRICE}" >> ${LOGFILE}
+                echo "CHZ_R_LAST_SELL=${CHZ_R_LAST_SELL}" >> ${LOGFILE}
+                echo "CHZ_TOTAL_LAST_SELL=${CHZ_TOTAL_LAST_SELL}" >> ${LOGFILE}
+                echo "CHZ_FLAG_ALERT=${CHZ_FLAG_ALERT}" >> ${LOGFILE}
+                echo "" >> ${LOGFILE}
+                echo "ETH_QTY=${ETH_QTY}" >> ${LOGFILE}
+                echo "ETH_PRICE=${ETH_PRICE}" >> ${LOGFILE}
+                echo "ETH_TOTAL_PRICE=${ETH_TOTAL_PRICE}" >> ${LOGFILE}
+                echo "ETH_R_LAST_SELL=${ETH_R_LAST_SELL}" >> ${LOGFILE}
+                echo "ETH_TOTAL_LAST_SELL=${ETH_TOTAL_LAST_SELL}" >> ${LOGFILE}
+                echo "ETH_FLAG_ALERT=${ETH_FLAG_ALERT}" >> ${LOGFILE}
+                echo "" >> ${LOGFILE}
+                echo "LTC_QTY=${LTC_QTY}" >> ${LOGFILE}
+                echo "LTC_PRICE=${LTC_PRICE}" >> ${LOGFILE}
+                echo "LTC_TOTAL_PRICE=${LTC_TOTAL_PRICE}" >> ${LOGFILE}
+                echo "LTC_R_LAST_SELL=${LTC_R_LAST_SELL}" >> ${LOGFILE}
+                echo "LTC_TOTAL_LAST_SELL=${LTC_TOTAL_LAST_SELL}" >> ${LOGFILE}
+                echo "LTC_FLAG_ALERT=${LTC_FLAG_ALERT}" >> ${LOGFILE}
+                echo "" >> ${LOGFILE}
+                echo "FLAG_FIRST_TIME=${FLAG_FIRST_TIME}" >> ${LOGFILE}
+        fi
+}
+
+
+#Alertis user by email about about new prices have reached the thresholds
 function alertUser {
         #Alert user
         #alertUser "dwulbr@gmail.com" "Subject: BCH is at least 3% below of its reference price. Check it ASAP!"
@@ -55,123 +313,106 @@ function alertUser {
 }
 
 
-#Capture cripto currencies values (Last, buy and sell)
+#OK Capture cripto currencies values (Last, buy and sell)
 function checkNewPricesUpdates {
         #BCH
         BCH_LAST_PRICE=`curl -s https://www.mercadobitcoin.net/api/BCH/ticker | jq --raw-output '.ticker.last'`
+        BCH_LAST_PRICE=$( printf "%.8f" $BCH_LAST_PRICE )
 
         #BTC
         BTC_LAST_PRICE=`curl -s https://www.mercadobitcoin.net/api/BTC/ticker | jq --raw-output '.ticker.last'`
+        BTC_LAST_PRICE=$( printf "%.8f" $BTC_LAST_PRICE )
 
         #CHZ
         CHZ_LAST_PRICE=`curl -s https://www.mercadobitcoin.net/api/CHZ/ticker | jq --raw-output '.ticker.last'`
+        $CHZ_LAST_PRICE=$( printf "%.8f" $CHZ_LAST_PRICE )
 
         #ETH
         ETH_LAST_PRICE=`curl -s https://www.mercadobitcoin.net/api/ETH/ticker | jq --raw-output '.ticker.last'`
+        ETH_LAST_PRICE=$( printf "%.8f" $ETH_LAST_PRICE )
 
         #LTC
         LTC_LAST_PRICE=`curl -s https://www.mercadobitcoin.net/api/LTC/ticker | jq --raw-output '.ticker.last'`
+        LTC_LAST_PRICE=$( printf "%.8f" $LTC_LAST_PRICE )
 }
 
 
-#check and alert user to sell if the last price has reached an expected price.
-# checkTimeToSell ${BCH_REF} ${BCH_LAST_PRICE} "BCH"
+#check and alert user to sell if the last price has reached an expected price: i
+#checkTimeToSell ${BCH_R_LAST_SELL} ${BCH_LAST_PRICE} "BCH"
 function checkTimeToSell {
 
-        #PRICE_PLUS_GP is reference price + 3% of gross profit...
-        #PRICE_PLUS_GP is equal LAST_PRICE * (GROSS_PROFIT_PERC / 100)
-
-        PRICE_PLUS_GP=`bc <<< "scale=2;(${GROSS_PROFIT_PERC}/100)*${1}"`
-        PRICE_PLUS_GP=$( printf "%.8f" $PRICE_PLUS_GP )
-        PARAM2="${2}"
-        PARAM2=$( printf "%.8f" $PARAM2 )
+        #R_LAST_SELL_GP is reference price + 3% of gross profit...
+        R_LAST_SELL_GP=`bc <<< "scale=2;(${1}+(${GROSS_PROFIT_PERC}/100)*${1})"`
+        R_LAST_SELL_GP=$( printf "%.8f" $R_LAST_SELL_GP )
 
         #...and last price must be iqual or greater than the reference price + 3% of gross profit to alert the user: Sell time!!!
-        FLAG_SELL_TIME=`echo ${PARAM2}'>'${PRICE_PLUS_GP} | bc -l`
+        FLAG_SELL_TIME=`echo ${2}'>'${R_LAST_SELL_GP} | bc -l`
 
-#--->DEBUG<---#
-        #echo "PARAM2=${PARAM2}"
-        #echo "PRICE_PLUS_GP=${PRICE_PLUS_GP}"
-        #echo "FLAG_SELL_TIME=${FLAG_SELL_TIME}"
-        #TRUE for CURRENT VALUE > THE LAST VALUE PAID (3% above)
+        #TRUE for LAST PRICE IS GREATER THAN R_LAST_SELL(3% above)
         if [ ${FLAG_SELL_TIME} -ne 0 ];then
                 #Alert user
-                alertUser "dwulbr@gmail.com" "Subject: ${3} is at least 3% above of its reference price. Check it ASAP!"
+                if [ ${BCH_FLAG_ALERT} -eq 1 ];then
+                        alertUser "dwulbr@gmail.com" "Subject: ${3} last price is currently 3% above of ${3} R LAST SELL"
+                fi
 
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} last price is currently 3% above of its reference price. Would you like to sell it?"   >> ${LOGFILE}
-                echo "${3} last price is currently 3% above of reference price."
-                echo -n "Would you like to sell part of ${3} ? [y/n]"
-                read YESNO
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} last price is currently 3% above of ${3} R LAST SELL"   >> ${LOGFILE}
 
-                if [ "${YESNO}" == "y" ] ; then
-                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`GP's ${3} has been sold."   >> ${LOGFILE}
+                if [ "${3}" == "BCH" ];then
+                        #Disable alert for BCH coin
+                        BCH_FLAG_ALERT=0
 
-                        if [ "${3}" == "BCH" ];then
+                        #update JSON value
+                        JSON_UPDATE=`jq --arg flagalert "${BCH_FLAG_ALERT}" '.mbc.currency.bch.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                        echo $JSON_UPDATE > ${CONFIG_FILE}
+                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} Flag alert has been disabled."   >> ${LOGFILE}
 
-                                #update JSON value
-                                JSON_UPDATE=`jq --arg lastprice "${BCH_LAST_PRICE}" '.refprice.bch = $lastprice' ${CONFIG_FILE}`
-#--->DEBUG<---#
-                                #echo "JSON_UPDATE=${JSON_UPDATE}"
-                                echo $JSON_UPDATE > ${CONFIG_FILE}
-                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} reference value has been update."   >> ${LOGFILE}
+                elif [ "${3}" == "BTC" ];then
+                        #Disable alert for BTC coin
+                        BTC_FLAG_ALERT=0
 
-                                #update reference variable
-                                BCH_REF=${BCH_LAST_PRICE}
+                        #update JSON value
+                        JSON_UPDATE=`jq --arg flagalert "${BTC_FLAG_ALERT}" '.mbc.currency.btc.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                        echo $JSON_UPDATE > ${CONFIG_FILE}
+                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} Flag alert has been disabled."   >> ${LOGFILE}
 
-                        elif [ "${3}" == "BTC" ];then
 
-                                #update JSON value
-                                JSON_UPDATE=`jq --arg lastprice "${BTC_LAST_PRICE}" '.refprice.btc = $lastprice' ${CONFIG_FILE}`
-                                echo $JSON_UPDATE > ${CONFIG_FILE}
+                elif [ "${3}" == "CHZ" ];then
+                        #Disable alert for CHZ coin
+                        CHZ_FLAG_ALERT=0
 
-                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} reference value has been updated."   >> ${LOGFILE}
 
-                                #update reference variable
-                                BTC_REF=${BTC_LAST_PRICE}
+                        #update JSON value
+                        JSON_UPDATE=`jq --arg flagalert "${CHZ_FLAG_ALERT}" '.mbc.currency.chz.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                        echo $JSON_UPDATE > ${CONFIG_FILE}
+                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} Flag alert has been disabled."   >> ${LOGFILE}
 
-                        elif [ "${3}" == "CHZ" ];then
 
-                                #update JSON value
-                                JSON_UPDATE=`jq --arg lastprice "${CHZ_LAST_PRICE}" '.refprice.chz = $lastprice' ${CONFIG_FILE}`
-                                echo $JSON_UPDATE > ${CONFIG_FILE}
+                elif [ "${3}" == "ETH" ];then
+                        #Disable alert for ETH coin
+                        ETH_FLAG_ALERT=0
 
-                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} reference value has been updated."   >> ${LOGFILE}
 
-                                #update reference variable
-                                CHZ_REF=${CHZ_LAST_PRICE}
+                        #update JSON value
+                        JSON_UPDATE=`jq --arg flagalert "${ETH_FLAG_ALERT}" '.mbc.currency.eth.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                        echo $JSON_UPDATE > ${CONFIG_FILE}
+                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} Flag alert has been disabled."   >> ${LOGFILE}
 
-                        elif [ "${3}" == "ETH" ];then
 
-                                #update JSON value
-                                JSON_UPDATE=`jq --arg lastprice "${ETH_LAST_PRICE}" '.refprice.eth = $lastprice' ${CONFIG_FILE}`
-                                echo $JSON_UPDATE > ${CONFIG_FILE}
+                elif [ "${3}" == "LTC" ];then
+                        #Disable alert for LTC coin
+                        LTC_FLAG_ALERT=0
 
-                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} reference value has been updated."   >> ${LOGFILE}
 
-                                #update reference variable
-                                ETH_REF=${ETH_LAST_PRICE}
-
-                        elif [ "${3}" == "LTC" ];then
-
-                                #update JSON value
-                                JSON_UPDATE=`jq --arg lastprice "${LTC_LAST_PRICE}" '.refprice.ltc = $lastprice' ${CONFIG_FILE}`
-                                echo $JSON_UPDATE > ${CONFIG_FILE}
-
-                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} reference value has been updated."   >> ${LOGFILE}
-
-                                #update reference variable
-                                LTC_REF=${LTC_LAST_PRICE}
-                        else
-
-                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} is a invalid crypto currency."   >> ${LOGFILE}
-                        fi
-
+                        #update JSON value
+                        JSON_UPDATE=`jq --arg flagalert "${LTC_FLAG_ALERT}" '.mbc.currency.ltc.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                        echo $JSON_UPDATE > ${CONFIG_FILE}
+                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} Flag alert has been disabled."   >> ${LOGFILE}
                 else
-                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} sells has been denied by user!"   >> ${LOGFILE}
+                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`${3} is a invalid crypto currency."   >> ${LOGFILE}
                 fi
         else
                 #Last value does not reach 3% above of reference price for ${3} crypto currency."
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Last value does not reach 3% above of reference price for ${3} crypto currency."   >> ${LOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Last price is not 3% above of ${3} R LAST SELL."   >> ${LOGFILE}
         fi
 }
 
@@ -328,25 +569,13 @@ function checkTimeToBuy {
 }
 
 
-###########################################
-#
-# Variables
-#
-###########################################
 
-#Log file name y default
-LOGFILE="mbc.log"
-#Time in seconds before check prices again
-WAITING=10
 
-#Mercado Bitcoin tax % or in R$
-#https://www.mercadobitcoin.com.br/comissoes-prazos-limites
-#Executada=sell 0.30%
-#Executora 0.70%
-#MBC_TAX_SELL=0.30
-#MBC_TAX_BUY=0.70
-#Gross profit in %
-GROSS_PROFIT_PERC=3
+##########################################
+#
+# The main code starts here
+#
+#########################################
 
 #Check access permission toexecute this script
 if [ `id -u` -ne 0 ] && [ `id -g` -ne 0 ]; then
@@ -356,111 +585,67 @@ fi
 
 #Capture line command parameter
 if [ "${1}" = "-h" ]; then
-        echo "Usage: ${0} [ -h ] | [-f <config file name>]"
-        echo ""
-        echo "The script reads the config file (.mbconf). This config file should "
-        echo "have a reference value defined for each crypto currency:"
-        echo "BCH : Bitcoin Cash"
-        echo "BTC : Bitcoin"
-        echo "CHZ : Chiliz"
-        echo "ETH : Ethereum"
-        echo "LTC : Litecoin"
-        echo ""
-        echo "-h           show the command usage."
-        echo "-f <file>    reads <file> instead .mbconf (default choice)"
-        exit 2
-elif [ "${1}" = "-f" ] && [ ! -z "${2}" ]; then
-        CONFIG_FILE="${2}"
-else
-        CONFIG_FILE=".mbconf"
-fi
+        #Show usage function
+        usageScript
+        exit 0
+elif [ "${1}" = "scan" ]; then
+   #Starts loading an initial setup to the script runs properly
+   initialSetup
 
-echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The config file ${CONFIG_FILE} is being used by ${0}."  >> ${LOGFILE}
+   #Works in loop checking checking and comparing with new prices
+   while true ; do
+        echo "SCAN"
 
-if [ ! -f "${CONFIG_FILE}" ]; then
-        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`ERR: ${CONFIG_FILE} does not exist locally."  >> ${LOGFILE}
+        #check if config file exists to load all its variables values or create a new one.
+        loadConfigFile
 
-        #set up a new conf file in JSON format
-        while true ; do
-                #flag to ensure all inputed numbers are numbers type
-                isNUM=true
-
-                echo "Enter the references prices for each crypto currency(Numbers ONLY):"
-                echo -n "BCH:"
-                read BCH_REF
-                echo $BCH_REF | grep -q -v "[^0-9]"
-
-                if [ $? -ne 0 ];then
-                        isNUM=false
-                fi
-
-                echo -n "BTC:"
-                read BTC_REF
-                echo $BTC_REF | grep -q -v "[^0-9]"
-
-                if [ $? -ne 0 ];then
-                        isNUM=false
-                fi
-
-                echo -n "CHZ:"
-                read CHZ_REF
-                echo $CHZ_REF | grep -q -v "[^0-9]"
-
-                if [ $? -ne 0 ];then
-                        isNUM=false
-                fi
-
-                echo -n "ETH:"
-                read ETH_REF
-                echo $ETH_REF | grep -q -v "[^0-9]"
-
-                if [ $? -ne 0 ];then
-                        isNUM=false
-                fi
-
-                echo -n "LTC:"
-                read LTC_REF
-                echo $LTC_REF | grep -q -v "[^0-9]"
-
-                if [ $? -ne 0 ];then
-                        isNUM=false
-                fi
-
-                if $isNUM ; then
-                        echo -e "{\"refprice\": {\"bch\":\"${BCH_REF}\",\"btc\":\"${BTC_REF}\",\"chz\":\"${CHZ_REF}\",\"eth\":\"${ETH_REF}\",\"ltc\":\"${LTC_REF}\"}}" > ${CONFIG_FILE}
-                        break
-                fi
-        done
-
-else
-        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`Reading config file ${CONFIG_FILE}"   >> ${LOGFILE}
-
-        #Read config file and set up each currency reference price
-        BCH_REF=`cat ${CONFIG_FILE} | jq --raw-output '.refprice.bch'`
-        BTC_REF=`cat ${CONFIG_FILE} | jq --raw-output '.refprice.btc'`
-        CHZ_REF=`cat ${CONFIG_FILE} | jq --raw-output '.refprice.chz'`
-        ETH_REF=`cat ${CONFIG_FILE} | jq --raw-output '.refprice.eth'`
-        LTC_REF=`cat ${CONFIG_FILE} | jq --raw-output '.refprice.ltc'`
-fi
-
-# Check for updates each second running
-while true ; do
-        #Capture all current crypto currencies prices
+        #Load LAST_PRICE from Mecardobitcoin website API
         checkNewPricesUpdates
 
-        #Check each crypto currency has reached 3% above of reference price.
-        #If so, a question user confirmation y or n to sell for that current price.
-        checkTimeToSell ${BCH_REF} ${BCH_LAST_PRICE} "BCH"
-        checkTimeToSell ${BTC_REF} ${BTC_LAST_PRICE} "BTC"
-        checkTimeToSell ${CHZ_REF} ${CHZ_LAST_PRICE} "CHZ"
-        checkTimeToSell ${ETH_REF} ${ETH_LAST_PRICE} "ETH"
-        checkTimeToSell ${LTC_REF} ${LTC_LAST_PRICE} "LTC"
-
-exit 0
-        #Check each crypto currency has reached 3% below of reference price.
-        #If so, a question user confirmation y or n to buy crypto currency with the best price.
-        checkTimeToBuy
+        #Compare each LAST_PRICE with R_LAST_SELL of each crypto currency. If it's 3% above an alert by email is sent just once.
+        checkTimeToSell ${BCH_R_LAST_SELL} ${BCH_LAST_PRICE} "BCH"
+        checkTimeToSell ${BTC_R_LAST_SELL} ${BTC_LAST_PRICE} "BTC"
+        checkTimeToSell ${CHZ_R_LAST_SELL} ${CHZ_LAST_PRICE} "CHZ"
+        checkTimeToSell ${ETH_R_LAST_SELL} ${ETH_LAST_PRICE} "ETH"
+        checkTimeToSell ${LTC_R_LAST_SELL} ${LTC_LAST_PRICE} "LTC"
 
         #Wait 5 seconds by default before start the loop again.
         sleep ${WAITIING}
-done
+   done
+
+elif [ "${1}" = "menu" ]; then
+        echo "MENU"
+        #check if config file exists to load all its variables values or create a new one.
+        initialSetup
+
+        #- Enable/Disable SELL's alerts
+
+        #- Set up a new value to LAST_SELL
+
+        #- Shows 10 last lines from log file
+
+        #- Shows 10 last buy operations
+
+        #- Shows 10 last sell operations
+
+        #- Shows 10 last alerts sent by email
+
+        exit 0
+elif [ "${1}" = "buy" ] && [ ! -z "${2}" ] && [ ! -z "${3}" ]  && [ ! -z "${4}" ]; then
+        echo "BUY"
+        #check if config file exists to load all its variables values or create a new one.
+        initialSetup
+
+        exit 0
+
+elif [ "${1}" = "sell" ] && [ ! -z "${2}" ] && [ ! -z "${3}" ] && [ ! -z "${4}" ]; then
+        echo "SELL"
+        #check if config file exists to load all its variables values or create a new one.
+        initialSetup
+
+        exit 0
+else
+        #Show usage function
+        usageScript
+        exit 0
+fi
