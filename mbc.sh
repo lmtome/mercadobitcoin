@@ -589,6 +589,7 @@ function interativeMode {
                 if [ isNUM ];then
                         case $OPTMENU in
                                 1)clear
+                                clear
                                 echo "#################### MBC ADMIN ####################"
                                 echo "#                                                 #"
                                 echo "#                                                 #"
@@ -601,6 +602,12 @@ function interativeMode {
                                 echo "###################################################"
                                 echo -n ""
                                 
+                                BCH_FLAG_ALERT=1
+                                BTC_FLAG_ALERT=1
+                                CHZ_FLAG_ALERT=1
+                                ETH_FLAG_ALERT=1
+                                LTC_FLAG_ALERT=1
+
                                 #update JSON value
                                 JSON_UPDATE=`jq --arg flagalert "${BCH_FLAG_ALERT}" '.mbc.currency.bch.sell.flagalert = $flagalert' ${CONFIG_FILE}`
                                 echo $JSON_UPDATE > ${CONFIG_FILE}
@@ -624,6 +631,7 @@ function interativeMode {
                                 read OPTMENU;;
 
                                 2)clear
+                                clear
                                 echo "#################### MBC ADMIN ####################"
                                 echo "#                                                 #"
                                 echo "#                                                 #"
@@ -650,6 +658,7 @@ function interativeMode {
                                 read LTC_R_LAST_SELL
 
                                 clear
+                                clear
                                 echo "#################### MBC ADMIN ####################"
                                 echo "#                                                 "
                                 echo "#         LAST SELL PRICES HAVE BEEN SETUP        "
@@ -660,6 +669,7 @@ function interativeMode {
                                 echo "#   (LTC):$LTC_R_LAST_SELL                        "
                                 echo "#       Press ENTER to go back to main menu       "
                                 echo "###################################################"
+
                                 JSON_UPDATE=`jq --arg rlastsell "${BCH_R_LAST_SELL}" '.mbc.currency.bch.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
                                 echo $JSON_UPDATE > ${CONFIG_FILE}
                                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`[BCH] The last sell price useded as reference has been changed with success."   >> ${LOGFILE}
@@ -684,6 +694,7 @@ function interativeMode {
                                 read OPTMENU;;
 
                                 3)clear
+                                clear
                                 echo "#################### MBC ADMIN ####################"
                                 echo "#                                                 #"
                                 echo "#                                                 #"
@@ -699,6 +710,7 @@ function interativeMode {
                                 read OPTMENU;;
 
                                 4)clear
+                                clear
                                 echo "#################### MBC ADMIN ####################"
                                 echo "#                                                 #"
                                 echo "#                                                 #"
@@ -714,6 +726,7 @@ function interativeMode {
                                 read OPTMENU;;
 
                                 5)clear
+                                clear
                                 echo "#################### MBC ADMIN ####################"
                                 echo "#                                                 #"
                                 echo "#                                                 #"
@@ -729,6 +742,7 @@ function interativeMode {
                                 read OPTMENU;;
 
                                 6)clear
+                                clear
                                 echo "#################### MBC ADMIN ####################"
                                 echo "#                                                 #"
                                 echo "#                                                 #"
@@ -743,9 +757,12 @@ function interativeMode {
                                 echo -n ""
                                 read OPTMENU;;
 
-                                7)break;;
+                                7)clear
+                                clear
+                                break;;
 
                                 *)clear
+                                clear
                                 echo "#################### MBC ADMIN ####################"
                                 echo "#                                                 #"
                                 echo "#                                                 #"
