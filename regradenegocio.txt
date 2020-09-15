@@ -1,0 +1,154 @@
+QTDE: 1 BTC
+24/8 - 11674.06
+25/8 - 11688.32
+25/8 - 11125.82  Preco de compra (quanto ele pagou)
+26/8 - 11356.12
+27/8 - 11559.93
+
+REF:11125.82  Preco de compra (quanto ele pagou). 
+Nunca foi feito venda
+
+Pegar o last a cada 5s e com parar com a referencia
+
+Se der 3% de diferenca entre Last e referencia
+    Alarme
+    vende 1,5% do (Last * Quantidade)
+    referencia = last
+--------------------------------------------------------
+
+
+1 - CRIAR MENU ADMIN 
+    - HABILITAR/DESABILITAR ALERTA DE SELL
+
+SCAN 24x7 
+LINHA DE COMANDO
+Scan:
+(./mbc.sh scan &)
+
+Buy:
+./mbc.sh buy BTC 0.12345678 54000.99 
+
+Sell:
+./mbc.sh sell BTC 0.12345678 54000.99
+
+Admin menu:
+./mbc.sh menu
+    1- HABILITAR/DESABILITAR ALERTA DE SELL
+    2- Setar valores para LAST_SELL
+    3- Visualizar 10 ultimas linhas de log
+    4- Visualizar 10 ultimas operacoes buy
+    5- Visualizar 10 ultimas operacoes sell
+    6- Visualizar 10 ultimos alertas
+
+
+
+SCAN BUY:
+    1. Verifica se tem .conf, se nao houver pede pra configurar:
+    
+
+    TIPO DA MOEDA
+            BUY
+		    R_QUANTIDADE
+		    R_PRICE 
+		    R_TOTAL_PRICE
+	    SELL
+                    R_LAST_SELL
+                    R_TOTAL_LAST_SELL
+             	    FLAG_ALERT=true
+    ADMIN_CONFIG
+	    FLAG_FIRST_TIME=true
+                        
+
+    2. Usuario tem quem inputar os valores manualmente de referencia para BUY de 
+cada moeda com base no VALOR MEDIO DE COMPRAS passadas (usando valores / quantidades) se FLAG_FIRST_TIME=true:
+       R_LAST_SELL = R_PRICE;
+       FLAG_FIRST_TIME=false;
+    3. O sistema monitora o LAST_PRICE de cada moeda ate achar um valor que seja 3% acima do valor de referencia setado no .conf. da variavel (R_LAST_SELL)
+    4. Envia alerta por email e Seta Flag pra NAO ALERTAR MAIS
+    5. Seta FLAG em Arquivo para PARAR DE GERAR ALERTA
+    6. O sistema de scan so voltara a enviar alerta se o usuario entrar no menu de admin e habilitar alerta de BUY;
+    7. Assim que o script de SCAN perceber alguma mudança no .config é para carregar as mudanças nas variaveis;
+
+
+
+BUY
+    1. O usuario decide comprar (BUY). Chama o SCRIPT.sh Mode OperationBUY type_Crypto QTD_FLOAT CURRENT_PRICE
+    2. Recalculei os VALORES DE REFERENCIA PARA BUY 
+    Buscar no JSON o tipo da moeda
+
+    TIPO DA MOEDA
+            BUY
+		    R_QUANTIDADE
+		    R_PRICE 
+		    R_TOTAL_PRICE
+
+    R_QUANTIDADE=(R_QUANTIDADE + QTD_FLOAT)
+    R_PRICE=(R_TOTAL_PRICE+(QTD_FLOAT * CURRENT_PRICE))/(R_QUANTIDADE + QTD_FLOAT)
+    R_TOTAL_PRICE=(R_TOTAL_PRICE + (QTD_FLOAT * CURRENT_PRICE))
+
+    3. Recalculei os VALORES DE REFERENCIA PARA SELL. 
+    Buscar no JSON o tipo da moeda
+    TIPO DA MOEDA
+	    SELL
+                    R_LAST_SELL
+                    R_TOTAL_LAST_SELL
+
+    R_QUANTIDADE=(R_QUANTIDADE - QTD_FLOAT)
+
+    R_TOTAL_LAST_SELL=(R_QUANTIDADE * R_LAST_SELL) + (QTD_FLOAT * CURRENT_PRICE)
+    R_LAST_SELL=(R_TOTAL_PRICE + (QTD_FLOAT * CURRENT_PRICE))/(R_QUANTIDADE + QTD_FLOAT)
+    
+    4. setar FLAG_ALERT=true para habilitar os alertas novamente
+    *caso o usuario nao utilize o SELL o alerta so voltara a funcionar se o usuario habilitar via menu*
+
+        
+SELL
+    1. O usuario decide vender (SELL). Chama o SCRIPT.sh Mode OperationSELL type_Crypto QTD_FLOAT CURRENT_PRICE
+    2. Recalculei os VALORES DE REFERENCIA PARA SELL 
+    Buscar no JSON o tipo da moeda
+    TIPO DA MOEDA
+            BUY
+		    R_QUANTIDADE
+		    R_PRICE 
+		    R_TOTAL_PRICE
+	    SELL
+                    R_LAST_SELL
+                    R_TOTAL_LAST_SELL
+
+    3. Alterar os valores dentro do JSON
+    R_QUANTIDADE = (R_QUANTIDADE - QTD_FLOAT)
+    R_LAST_SELL = CURRENT_PRICE
+
+    4. setar FLAG_ALERT=true para habilitar os alertas novamente
+    *caso o usuario nao utilize o SELL o alerta so voltara a funcionar se o usuario habilitar via menu*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
