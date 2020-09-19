@@ -831,7 +831,7 @@ function recalcBuying {
                 JSON_UPDATE=`jq --arg rprice "${ETH_PRICE}" '.mbc.currency.eth.buy.rprice = $rprice' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new ETH reference price is ${ETH_PRICE}"   >> ${BUYLOGFILE}
-                ETH_R_LAST_SELL=ETH_PRICE
+                ETH_R_LAST_SELL=${ETH_PRICE}
                 JSON_UPDATE=`jq --arg rlastsell "${ETH_R_LAST_SELL}" '.mbc.currency.eth.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new R_LAST_SELL price from ETH has a new reference price: ${ETH_R_LAST_SELL}"   >> ${BUYLOGFILE}
