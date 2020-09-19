@@ -18,9 +18,6 @@
 # Variables
 #
 ###########################################
-
-echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF: Starting MCB script."  >> ${LOGFILE}
-
 #MBC general log file for ERR and INF messages
 LOGFILE="mbc.log"
 #All buying transations will be logged on this file
@@ -29,6 +26,8 @@ BUYLOGFILE=".buy.log"
 SELLLOGFILE=".sell.log"
 #All user alerts will be logged on this file
 ALERTLOGFILE=".alert.log"
+
+echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF: Starting MCB script."  >> ${LOGFILE}
 
 #Configuration file
 CONFIG_FILE=".mbc.conf"
