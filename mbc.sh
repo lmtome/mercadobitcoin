@@ -792,13 +792,25 @@ function recalcBuying {
         elif [ "${1}" == "ETH" ];then
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1}." >> ${BUYLOGFILE}
             #BUY
+                echo "*************** INICIO BUY ****************"
+                echo "2=${2}"
+                echo "3=${3}"
+                echo "ETH_QTY=$ETH_QTY"
+                echo "ETH_R_LAST_SELL=$ETH_R_LAST_SELL"
+                echo "ETH_TOTAL_PRICE=$ETH_TOTAL_PRICE"
+                echo "ETH_PRICE=$ETH_PRICE"
+
+
+                ETH_TOTAL_PRICE=`bc <<< "scale=2;($ETH_QTY*$ETH_R_LAST_SELL)"`
+                ETH_TOTAL_PRICE=$( printf "%.8f" $ETH_TOTAL_PRICE )
+
                 ETH_QTY=`bc <<< "scale=2;($ETH_QTY+${2})"`
                 ETH_QTY=$( printf "%.8f" $ETH_QTY )
                 JSON_UPDATE=`jq --arg rqty "${ETH_QTY}" '.mbc.currency.eth.buy.rqty = $rqty' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new ETH reference quantitiy is ${ETH_QTY}."   >> ${BUYLOGFILE}
-
-                ETH_PRICE=`bc <<< "scale=2;($ETH_TOTAL_PRICE+(${2}*${3}))/(${ETH_QTY}+${2})"`
+ 
+                ETH_PRICE=`bc <<< "scale=2;($ETH_TOTAL_PRICE+(${2}*${3}))/(${ETH_QTY})"`
                 ETH_PRICE=$( printf "%.8f" $ETH_PRICE )
                 JSON_UPDATE=`jq --arg rprice "${ETH_PRICE}" '.mbc.currency.eth.buy.rprice = $rprice' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
@@ -809,6 +821,16 @@ function recalcBuying {
                 JSON_UPDATE=`jq --arg rtotalprice "${ETH_TOTAL_PRICE}" '.mbc.currency.eth.buy.rtotalprice = $rtotalprice' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new ETH reference total price is ${ETH_TOTAL_PRICE}"   >> ${BUYLOGFILE}
+
+                echo "*************** FIM BUY ****************"
+                echo "2=${2}"
+                echo "3=${3}"
+                echo "ETH_QTY=$ETH_QTY"
+                echo "ETH_R_LAST_SELL=$ETH_R_LAST_SELL"
+                echo "ETH_TOTAL_PRICE=$ETH_TOTAL_PRICE"
+                echo "ETH_PRICE=$ETH_PRICE"
+                
+                exit 0
 
             #SELL
                 ETH_TOTAL_LAST_SELL=`bc <<< "scale=2;(${ETH_QTY}*${ETH_R_LAST_SELL})+(${2}*${3})"`
