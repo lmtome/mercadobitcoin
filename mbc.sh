@@ -7,7 +7,7 @@
 #
 #    BCH : Bitcoin Cash
 #    BTC : Bitcoin
-#    CHZ : Chiliz
+#    XRP : Ripple
 #    ETH : Ethereum
 #    LTC : Litecoin
 #
@@ -54,12 +54,12 @@ BTC_TOTAL_LAST_SELL=0
 BTC_FLAG_ALERT=1
 
 #BUY
-CHZ_QTY=0
-CHZ_PRICE=0
-CHZ_TOTAL_PRICE=0
-CHZ_R_LAST_SELL=0
-CHZ_TOTAL_LAST_SELL=0
-CHZ_FLAG_ALERT=1
+XRP_QTY=0
+XRP_PRICE=0
+XRP_TOTAL_PRICE=0
+XRP_R_LAST_SELL=0
+XRP_TOTAL_LAST_SELL=0
+XRP_FLAG_ALERT=1
 
 #BUY
 ETH_QTY=0
@@ -84,7 +84,7 @@ FLAG_FIRST_TIME=1
 #Initialization of all LAST prices variables
 BCH_LAST_PRICE=0
 BTC_LAST_PRICE=0
-CHZ_LAST_PRICE=0
+XRP_LAST_PRICE=0
 ETH_LAST_PRICE=0
 LTC_LAST_PRICE=0
 
@@ -97,14 +97,14 @@ LTC_LAST_PRICE=0
 
 #OK This function is called always the user does not choose an expected option and shows the script usage.
 function usageScript {
-        echo "Usage: ${0} [ -h | scan | menu | ( buy | sell )] <BCH|BTC|CHZ|ETH|LTC> <qty> <price> ]"
+        echo "Usage: ${0} [ -h | scan | menu | ( buy | sell )] <BCH|BTC|XRP|ETH|LTC> <qty> <price> ]"
         echo ""
         echo "-h           show the command usage."
         echo ""
         echo "scan - check for good prices to buy one of these crypto currencies below: "
         echo "BCH : Bitcoin Cash"
         echo "BTC : Bitcoin"
-        echo "CHZ : Chiliz"
+        echo "XRP : Ripple"
         echo "ETH : Ethereum"
         echo "LTC : Litecoin"
         echo ""
@@ -151,18 +151,18 @@ function loadConfigFile {
                 BTC_FLAG_ALERT=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.btc.sell.flagalert'`
 
                 #BUY
-                CHZ_QTY=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.chz.buy.rqty'`
-                CHZ_QTY=$( printf "%.8f" $CHZ_QTY )
-                CHZ_PRICE=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.chz.buy.rprice'`
-                CHZ_PRICE=$( printf "%.8f" $CHZ_PRICE )
-                CHZ_TOTAL_PRICE=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.chz.buy.rtotalprice'`
-                CHZ_TOTAL_PRICE=$( printf "%.8f" $CHZ_TOTAL_PRICE )
+                XRP_QTY=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.xrp.buy.rqty'`
+                XRP_QTY=$( printf "%.8f" $XRP_QTY )
+                XRP_PRICE=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.xrp.buy.rprice'`
+                XRP_PRICE=$( printf "%.8f" $XRP_PRICE )
+                XRP_TOTAL_PRICE=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.xrp.buy.rtotalprice'`
+                XRP_TOTAL_PRICE=$( printf "%.8f" $XRP_TOTAL_PRICE )
                 #SELL
-                CHZ_R_LAST_SELL=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.chz.sell.rlastsell'`
-                CHZ_R_LAST_SELL=$( printf "%.8f" $CHZ_R_LAST_SELL )
-                CHZ_TOTAL_LAST_SELL=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.chz.sell.rtotallastsell'`
-                CHZ_TOTAL_LAST_SELL=$( printf "%.8f" $CHZ_TOTAL_LAST_SELL )
-                CHZ_FLAG_ALERT=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.chz.sell.flagalert'`
+                XRP_R_LAST_SELL=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.xrp.sell.rlastsell'`
+                XRP_R_LAST_SELL=$( printf "%.8f" $XRP_R_LAST_SELL )
+                XRP_TOTAL_LAST_SELL=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.xrp.sell.rtotallastsell'`
+                XRP_TOTAL_LAST_SELL=$( printf "%.8f" $XRP_TOTAL_LAST_SELL )
+                XRP_FLAG_ALERT=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.xrp.sell.flagalert'`
 
                 #BUY
                 ETH_QTY=`cat ${CONFIG_FILE} | jq --raw-output '.mbc.currency.eth.buy.rqty'`
@@ -230,16 +230,16 @@ function initialSetup {
                 BTC_TOTAL_PRICE=`bc <<< "scale=2;(${BTC_QTY}*${BTC_PRICE})"`
                 BTC_TOTAL_PRICE=$( printf "%.8f" $BTC_TOTAL_PRICE )
 
-                #CHZ
-                echo "About CHZ crypto currency:"
+                #XRP
+                echo "About XRP crypto currency:"
                 echo -n "What is the quantity? Please input only numbers. Eg.: 0.12345678  =>"
-                read CHZ_QTY
-                CHZ_QTY=$( printf "%.8f" $CHZ_QTY )
+                read XRP_QTY
+                XRP_QTY=$( printf "%.8f" $XRP_QTY )
                 echo -n "What is the price? Please input only numbers. Eg.: 0.12345678  =>"
-                read CHZ_PRICE
-                CHZ_PRICE=$( printf "%.8f" $CHZ_PRICE )
-                CHZ_TOTAL_PRICE=`bc <<< "scale=2;(${CHZ_QTY}*${CHZ_PRICE})"`
-                CHZ_TOTAL_PRICE=$( printf "%.8f" $CHZ_TOTAL_PRICE )
+                read XRP_PRICE
+                XRP_PRICE=$( printf "%.8f" $XRP_PRICE )
+                XRP_TOTAL_PRICE=`bc <<< "scale=2;(${XRP_QTY}*${XRP_PRICE})"`
+                XRP_TOTAL_PRICE=$( printf "%.8f" $XRP_TOTAL_PRICE )
 
                 #ETH
                 echo "About ETH crypto currency:"
@@ -266,7 +266,7 @@ function initialSetup {
 		echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF: A config file has been saved with all currencies prices."  >> ${LOGFILE}
 
                 #Save new data input by user
-                echo -e "{\"mbc\":{\"currency\":{\"bch\":{\"buy\":{\"rqty\":\"${BCH_QTY}\",\"rprice\":\"${BCH_PRICE}\",\"rtotalprice\":\"${BCH_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${BCH_PRICE}\",\"rtotallastsell\":\"${BCH_PRICE}\",\"flagalert\":\"1\"}},\"btc\":{\"buy\":{\"rqty\":\"${BTC_QTY}\",\"rprice\":\"${BTC_PRICE}\",\"rtotalprice\":\"${BTC_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${BTC_PRICE}\",\"rtotallastsell\":\"${BTC_PRICE}\",\"flagalert\":\"1\"}},\"chz\":{\"buy\":{\"rqty\":\"${CHZ_QTY}\",\"rprice\":\"${CHZ_PRICE}\",\"rtotalprice\":\"${CHZ_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${CHZ_PRICE}\",\"rtotallastsell\":\"${BCH_PRICE}\",\"flagalert\":\"1\"}},\"eth\":{\"buy\":{\"rqty\":\"${ETH_QTY}\",\"rprice\":\"${ETH_PRICE}\",\"rtotalprice\":\"${ETH_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${ETH_PRICE}\",\"rtotallastsell\":\"${ETH_PRICE}\",\"flagalert\":\"1\"}},\"ltc\":{\"buy\":{\"rqty\":\"${LTC_QTY}\",\"rprice\":\"${LTC_PRICE}\",\"rtotalprice\":\"${LTC_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${LTC_PRICE}\",\"rtotallastsell\":\"${LTC_PRICE}\",\"flagalert\":\"1\"}}},\"adminconfig\":{\"flagfirsttime\":\"0\"}}}" > ${CONFIG_FILE}
+                echo -e "{\"mbc\":{\"currency\":{\"bch\":{\"buy\":{\"rqty\":\"${BCH_QTY}\",\"rprice\":\"${BCH_PRICE}\",\"rtotalprice\":\"${BCH_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${BCH_PRICE}\",\"rtotallastsell\":\"${BCH_PRICE}\",\"flagalert\":\"1\"}},\"btc\":{\"buy\":{\"rqty\":\"${BTC_QTY}\",\"rprice\":\"${BTC_PRICE}\",\"rtotalprice\":\"${BTC_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${BTC_PRICE}\",\"rtotallastsell\":\"${BTC_PRICE}\",\"flagalert\":\"1\"}},\"XRP\":{\"buy\":{\"rqty\":\"${XRP_QTY}\",\"rprice\":\"${XRP_PRICE}\",\"rtotalprice\":\"${XRP_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${XRP_PRICE}\",\"rtotallastsell\":\"${BCH_PRICE}\",\"flagalert\":\"1\"}},\"eth\":{\"buy\":{\"rqty\":\"${ETH_QTY}\",\"rprice\":\"${ETH_PRICE}\",\"rtotalprice\":\"${ETH_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${ETH_PRICE}\",\"rtotallastsell\":\"${ETH_PRICE}\",\"flagalert\":\"1\"}},\"ltc\":{\"buy\":{\"rqty\":\"${LTC_QTY}\",\"rprice\":\"${LTC_PRICE}\",\"rtotalprice\":\"${LTC_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${LTC_PRICE}\",\"rtotallastsell\":\"${LTC_PRICE}\",\"flagalert\":\"1\"}}},\"adminconfig\":{\"flagfirsttime\":\"0\"}}}" > ${CONFIG_FILE}
 
         else
 
@@ -299,9 +299,9 @@ function checkNewPricesUpdates {
         BTC_LAST_PRICE=`curl -s https://www.mercadobitcoin.net/api/BTC/ticker | jq --raw-output '.ticker.last'`
         BTC_LAST_PRICE=$( printf "%.8f" $BTC_LAST_PRICE )
 
-        #CHZ
-        CHZ_LAST_PRICE=`curl -s https://www.mercadobitcoin.net/api/CHZ/ticker | jq --raw-output '.ticker.last'`
-        CHZ_LAST_PRICE=$( printf "%.8f" $CHZ_LAST_PRICE )
+        #XRP
+        XRP_LAST_PRICE=`curl -s https://www.mercadobitcoin.net/api/XRP/ticker | jq --raw-output '.ticker.last'`
+        XRP_LAST_PRICE=$( printf "%.8f" $XRP_LAST_PRICE )
 
         #ETH
         ETH_LAST_PRICE=`curl -s https://www.mercadobitcoin.net/api/ETH/ticker | jq --raw-output '.ticker.last'`
@@ -360,17 +360,17 @@ function checkTimeToSell {
                                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`An alert has been sent: Last price is currently 3% above. ${3} Flag alert has been disabled."   >> ${LOGFILE}
                         fi
 
-                elif [ "${3}" == "CHZ" ];then
+                elif [ "${3}" == "XRP" ];then
                         #Alert user
-                        if [ ${CHZ_FLAG_ALERT} -eq 1 ];then
+                        if [ ${XRP_FLAG_ALERT} -eq 1 ];then
                                 alertUser "dwulbr@gmail.com" "Subject: ${3} last price is currently 3% above of ${3} R LAST SELL"
 
-                                #Disable alert for CHZ coin
-                                CHZ_FLAG_ALERT=0
+                                #Disable alert for XRP coin
+                                XRP_FLAG_ALERT=0
 
 
                                 #update JSON value
-                                JSON_UPDATE=`jq --arg flagalert "${CHZ_FLAG_ALERT}" '.mbc.currency.chz.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                                JSON_UPDATE=`jq --arg flagalert "${XRP_FLAG_ALERT}" '.mbc.currency.xrp.sell.flagalert = $flagalert' ${CONFIG_FILE}`
                                 echo $JSON_UPDATE > ${CONFIG_FILE}
                                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`An alert has been sent: Last price is currently 3% above. ${3} Flag alert has been disabled."   >> ${LOGFILE}
                         fi
@@ -405,7 +405,7 @@ function checkTimeToSell {
                                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`An alert has been sent: Last price is currently 3% above. ${3} Flag alert has been disabled."   >> ${LOGFILE}
                         fi
                 else
-                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "ERR3:`${3} is a invalid crypto currency. This scripts accept BCH, BTC, CHZ, ETH and LTC ONLY!"   >> ${LOGFILE}
+                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "ERR3:`${3} is a invalid crypto currency. This scripts accept BCH, BTC, XRP, ETH and LTC ONLY!"   >> ${LOGFILE}
 			exit 3
                 fi
         else
@@ -464,7 +464,7 @@ function interativeMode {
                                 
                                 BCH_FLAG_ALERT=1
                                 BTC_FLAG_ALERT=1
-                                CHZ_FLAG_ALERT=1
+                                XRP_FLAG_ALERT=1
                                 ETH_FLAG_ALERT=1
                                 LTC_FLAG_ALERT=1
 
@@ -477,9 +477,9 @@ function interativeMode {
                                 echo $JSON_UPDATE > ${CONFIG_FILE}
                                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`BTC Flag alert has been enabled by user."   >> ${LOGFILE}
 
-                                JSON_UPDATE=`jq --arg flagalert "${CHZ_FLAG_ALERT}" '.mbc.currency.chz.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                                JSON_UPDATE=`jq --arg flagalert "${XRP_FLAG_ALERT}" '.mbc.currency.xrp.sell.flagalert = $flagalert' ${CONFIG_FILE}`
                                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`CHZ Flag alert has been enabled by user."   >> ${LOGFILE}
+                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`XRP Flag alert has been enabled by user."   >> ${LOGFILE}
 
                                 JSON_UPDATE=`jq --arg flagalert "${ETH_FLAG_ALERT}" '.mbc.currency.eth.sell.flagalert = $flagalert' ${CONFIG_FILE}`
                                 echo $JSON_UPDATE > ${CONFIG_FILE}
@@ -511,8 +511,8 @@ function interativeMode {
                                 echo -n "BTC last sell price (Eg.: 0.12345678)     =>"
                                 read BTC_R_LAST_SELL
 
-                                echo -n "CHZ last sell price (Eg.: 0.12345678)     =>"
-                                read CHZ_R_LAST_SELL
+                                echo -n "XRP last sell price (Eg.: 0.12345678)     =>"
+                                read XRP_R_LAST_SELL
 
                                 echo -n "ETH last sell price (Eg.: 0.12345678)     =>"
                                 read ETH_R_LAST_SELL
@@ -527,7 +527,7 @@ function interativeMode {
                                 echo "#         LAST SELL PRICES HAVE BEEN SETUP        "
                                 echo "#   (BCH):$BCH_R_LAST_SELL                        "
                                 echo "#   (BTC):$BTC_R_LAST_SELL                        "
-                                echo "#   (CHZ):$CHZ_R_LAST_SELL                        "
+                                echo "#   (XRP):$XRP_R_LAST_SELL                        "
                                 echo "#   (ETH):$ETH_R_LAST_SELL                        "
                                 echo "#   (LTC):$LTC_R_LAST_SELL                        "
                                 echo "#       Press ENTER to go back to main menu       "
@@ -541,9 +541,9 @@ function interativeMode {
                                 echo $JSON_UPDATE > ${CONFIG_FILE}
                                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`[BTC] The last sell price useded as reference has been changed with success."   >> ${LOGFILE}
 
-                                JSON_UPDATE=`jq --arg rlastsell "${CHZ_R_LAST_SELL}" '.mbc.currency.chz.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                                JSON_UPDATE=`jq --arg rlastsell "${XRP_R_LAST_SELL}" '.mbc.currency.xrp.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
                                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`[CHZ] The last sell price useded as reference has been changed with success."   >> ${LOGFILE}
+                                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`[XRP] The last sell price useded as reference has been changed with success."   >> ${LOGFILE}
 
                                 JSON_UPDATE=`jq --arg rlastsell "${ETH_R_LAST_SELL}" '.mbc.currency.eth.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
                                 echo $JSON_UPDATE > ${CONFIG_FILE}
@@ -553,7 +553,7 @@ function interativeMode {
                                 echo $JSON_UPDATE > ${CONFIG_FILE}
                                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`[LTC] The last sell price useded as reference has been changed with success."   >> ${LOGFILE}
 
-				echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF: Last sell prices have been setup by user. (BCH):$BCH_R_LAST_SELL;(BTC):$BTC_R_LAST_SELL;(CHZ):$CHZ_R_LAST_SELL;(ETH):$ETH_R_LAST_SELL; (LTC):$LTC_R_LAST_SELL."   >> ${LOGFILE}
+				echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF: Last sell prices have been setup by user. (BCH):$BCH_R_LAST_SELL;(BTC):$BTC_R_LAST_SELL;(XRP):$XRP_R_LAST_SELL;(ETH):$ETH_R_LAST_SELL; (LTC):$LTC_R_LAST_SELL."   >> ${LOGFILE}
 
                                 echo -n ""
                                 read OPTMENU;;
@@ -642,7 +642,7 @@ function interativeMode {
                                         echo "#      Choose the crypto Currency below:          #"
                                         echo "#   1 - BCH                                       #"
                                         echo "#   2 - BTC                                       #"
-                                        echo "#   3 - CHZ                                       #"
+                                        echo "#   3 - XRP                                       #"
                                         echo "#   4 - ETH                                       #"
                                         echo "#   5 - LTC                                       #"
                                         echo "#   6 - Back to main menu                         #"
@@ -678,13 +678,13 @@ function interativeMode {
 
                                                         3) 
                                                            #BUY
-                                                           echo "CHZ_QTY=${CHZ_QTY}"
-                                                           echo "CHZ_PRICE=${CHZ_PRICE}"
-                                                           echo "CHZ_TOTAL_PRICE=${CHZ_TOTAL_PRICE}"
+                                                           echo "XRP_QTY=${XRP_QTY}"
+                                                           echo "XRP_PRICE=${XRP_PRICE}"
+                                                           echo "XRP_TOTAL_PRICE=${XRP_TOTAL_PRICE}"
                                                            #SELL
-                                                           echo "CHZ_R_LAST_SELL=${CHZ_R_LAST_SELL}"
-                                                           echo "CHZ_TOTAL_LAST_SELL=${CHZ_TOTAL_LAST_SELL}"
-                                                           echo "CHZ_FLAG_ALERT=${CHZ_FLAG_ALERT}"
+                                                           echo "XRP_R_LAST_SELL=${XRP_R_LAST_SELL}"
+                                                           echo "XRP_TOTAL_LAST_SELL=${XRP_TOTAL_LAST_SELL}"
+                                                           echo "XRP_FLAG_ALERT=${XRP_FLAG_ALERT}"
                                                         4) 
                                                            #BUY
                                                            echo "ETH_QTY=${ETH_QTY}"
@@ -862,52 +862,52 @@ function recalcBuying {
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`BTC Flag alert has been enabled by user."   >> ${BUYLOGFILE}
 
-        elif [ "${1}" == "CHZ" ];then
+        elif [ "${1}" == "XRP" ];then
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1}." >> ${BUYLOGFILE}
             #BUY
-                CHZ_TOTAL_PRICE=`bc <<< "scale=2;($CHZ_QTY*$CHZ_R_LAST_SELL)"`
-                CHZ_TOTAL_PRICE=$( printf "%.8f" $CHZ_TOTAL_PRICE )
+                XRP_TOTAL_PRICE=`bc <<< "scale=2;($XRP_QTY*$XRP_R_LAST_SELL)"`
+                XRP_TOTAL_PRICE=$( printf "%.8f" $XRP_TOTAL_PRICE )
 
-                CHZ_QTY=`bc <<< "scale=2;($CHZ_QTY+${2})"`
-                CHZ_QTY=$( printf "%.8f" $CHZ_QTY )
-                JSON_UPDATE=`jq --arg rqty "${CHZ_QTY}" '.mbc.currency.chz.buy.rqty = $rqty' ${CONFIG_FILE}`
+                XRP_QTY=`bc <<< "scale=2;($XRP_QTY+${2})"`
+                XRP_QTY=$( printf "%.8f" $XRP_QTY )
+                JSON_UPDATE=`jq --arg rqty "${XRP_QTY}" '.mbc.currency.xrp.buy.rqty = $rqty' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new CHZ reference quantitiy is ${CHZ_QTY}."   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new XRP reference quantitiy is ${XRP_QTY}."   >> ${BUYLOGFILE}
  
-                CHZ_PRICE=`bc <<< "scale=2;($CHZ_TOTAL_PRICE+(${2}*${3}))/(${CHZ_QTY})"`
-                CHZ_PRICE=$( printf "%.8f" $CHZ_PRICE )
-                JSON_UPDATE=`jq --arg rprice "${CHZ_PRICE}" '.mbc.currency.chz.buy.rprice = $rprice' ${CONFIG_FILE}`
+                XRP_PRICE=`bc <<< "scale=2;($XRP_TOTAL_PRICE+(${2}*${3}))/(${XRP_QTY})"`
+                XRP_PRICE=$( printf "%.8f" $XRP_PRICE )
+                JSON_UPDATE=`jq --arg rprice "${XRP_PRICE}" '.mbc.currency.xrp.buy.rprice = $rprice' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new CHZ reference price is ${CHZ_PRICE}"   >> ${BUYLOGFILE}
-                CHZ_R_LAST_SELL=${CHZ_PRICE}
-                JSON_UPDATE=`jq --arg rlastsell "${CHZ_R_LAST_SELL}" '.mbc.currency.chz.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new XRP reference price is ${XRP_PRICE}"   >> ${BUYLOGFILE}
+                XRP_R_LAST_SELL=${XRP_PRICE}
+                JSON_UPDATE=`jq --arg rlastsell "${XRP_R_LAST_SELL}" '.mbc.currency.xrp.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new R_LAST_SELL price from CHZ has a new reference price: ${CHZ_R_LAST_SELL}"   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new R_LAST_SELL price from XRP has a new reference price: ${XRP_R_LAST_SELL}"   >> ${BUYLOGFILE}
 
-                CHZ_TOTAL_PRICE=`bc <<< "scale=2;(${CHZ_TOTAL_PRICE}+(${2}*${3}))"`
-                CHZ_TOTAL_PRICE=$( printf "%.8f" $CHZ_TOTAL_PRICE )       
-                JSON_UPDATE=`jq --arg rtotalprice "${CHZ_TOTAL_PRICE}" '.mbc.currency.chz.buy.rtotalprice = $rtotalprice' ${CONFIG_FILE}`
+                XRP_TOTAL_PRICE=`bc <<< "scale=2;(${XRP_TOTAL_PRICE}+(${2}*${3}))"`
+                XRP_TOTAL_PRICE=$( printf "%.8f" $XRP_TOTAL_PRICE )       
+                JSON_UPDATE=`jq --arg rtotalprice "${XRP_TOTAL_PRICE}" '.mbc.currency.xrp.buy.rtotalprice = $rtotalprice' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new CHZ reference total price is ${CHZ_TOTAL_PRICE}"   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new XRP reference total price is ${XRP_TOTAL_PRICE}"   >> ${BUYLOGFILE}
 
             #SELL
-                CHZ_TOTAL_LAST_SELL=`bc <<< "scale=2;(${CHZ_QTY}*${CHZ_R_LAST_SELL})+(${2}*${3})"`
-                CHZ_TOTAL_LAST_SELL=$( printf "%.8f" $CHZ_TOTAL_LAST_SELL )
-                JSON_UPDATE=`jq --arg rtotallastsell "${CHZ_TOTAL_LAST_SELL}" '.mbc.currency.chz.sell.rtotallastsell = $rtotallastsell' ${CONFIG_FILE}`
+                XRP_TOTAL_LAST_SELL=`bc <<< "scale=2;(${XRP_QTY}*${XRP_R_LAST_SELL})+(${2}*${3})"`
+                XRP_TOTAL_LAST_SELL=$( printf "%.8f" $XRP_TOTAL_LAST_SELL )
+                JSON_UPDATE=`jq --arg rtotallastsell "${XRP_TOTAL_LAST_SELL}" '.mbc.currency.xrp.sell.rtotallastsell = $rtotallastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new CHZ reference total last sell price is ${CHZ_TOTAL_LAST_SELL}"   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new XRP reference total last sell price is ${XRP_TOTAL_LAST_SELL}"   >> ${BUYLOGFILE}
 
-                CHZ_R_LAST_SELL=`bc <<< "scale=2;(${CHZ_TOTAL_PRICE}+(${2}*${3}))/(${CHZ_QTY}+${2})"`
-                CHZ_R_LAST_SELL=$( printf "%.8f" $CHZ_R_LAST_SELL )
-                JSON_UPDATE=`jq --arg rlastsell "${CHZ_R_LAST_SELL}" '.mbc.currency.chz.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                XRP_R_LAST_SELL=`bc <<< "scale=2;(${XRP_TOTAL_PRICE}+(${2}*${3}))/(${XRP_QTY}+${2})"`
+                XRP_R_LAST_SELL=$( printf "%.8f" $XRP_R_LAST_SELL )
+                JSON_UPDATE=`jq --arg rlastsell "${XRP_R_LAST_SELL}" '.mbc.currency.xrp.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new CHZ reference last sell price is ${CHZ_R_LAST_SELL}"   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new XRP reference last sell price is ${XRP_R_LAST_SELL}"   >> ${BUYLOGFILE}
 
-                CHZ_FLAG_ALERT=1
+                XRP_FLAG_ALERT=1
                 #update JSON value
-                JSON_UPDATE=`jq --arg flagalert "${CHZ_FLAG_ALERT}" '.mbc.currency.chz.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                JSON_UPDATE=`jq --arg flagalert "${XRP_FLAG_ALERT}" '.mbc.currency.xrp.sell.flagalert = $flagalert' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`CHZ Flag alert has been enabled by user."   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`XRP Flag alert has been enabled by user."   >> ${BUYLOGFILE}
 
         elif [ "${1}" == "ETH" ];then
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1}." >> ${BUYLOGFILE}
@@ -1073,28 +1073,28 @@ function recalcSelling {
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`BTC Flag alert has been enabled by user."   >> ${SELLLOGFILE}
 
-        elif [ "${1}" == "CHZ" ];then
+        elif [ "${1}" == "XRP" ];then
                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1} to recalc selling." >> ${SELLLOGFILE}
 
             #BUY
-                CHZ_QTY=`bc <<< "scale=2;($CHZ_QTY-${2})"`
-                CHZ_QTY=$( printf "%.8f" $CHZ_QTY )
-                JSON_UPDATE=`jq --arg rqty "${CHZ_QTY}" '.mbc.currency.chz.buy.rqty = $rqty' ${CONFIG_FILE}`
+                XRP_QTY=`bc <<< "scale=2;($XRP_QTY-${2})"`
+                XRP_QTY=$( printf "%.8f" $XRP_QTY )
+                JSON_UPDATE=`jq --arg rqty "${XRP_QTY}" '.mbc.currency.xrp.buy.rqty = $rqty' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new CHZ reference quantitiy is ${CHZ_QTY}."   >> ${SELLLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new XRP reference quantitiy is ${XRP_QTY}."   >> ${SELLLOGFILE}
 
             #SELL
-                CHZ_R_LAST_SELL=${3}
-                CHZ_R_LAST_SELL=$( printf "%.8f" $CHZ_R_LAST_SELL )
-                JSON_UPDATE=`jq --arg rlastsell "${CHZ_R_LAST_SELL}" '.mbc.currency.chz.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                XRP_R_LAST_SELL=${3}
+                XRP_R_LAST_SELL=$( printf "%.8f" $XRP_R_LAST_SELL )
+                JSON_UPDATE=`jq --arg rlastsell "${XRP_R_LAST_SELL}" '.mbc.currency.xrp.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new CHZ reference last sell price is ${CHZ_R_LAST_SELL}"   >> ${SELLLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new XRP reference last sell price is ${XRP_R_LAST_SELL}"   >> ${SELLLOGFILE}
 
-                CHZ_FLAG_ALERT=1
+                XRP_FLAG_ALERT=1
                 #update JSON value
-                JSON_UPDATE=`jq --arg flagalert "${CHZ_FLAG_ALERT}" '.mbc.currency.chz.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                JSON_UPDATE=`jq --arg flagalert "${XRP_FLAG_ALERT}" '.mbc.currency.xrp.sell.flagalert = $flagalert' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`CHZ Flag alert has been enabled by user."   >> ${SELLLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`XRP Flag alert has been enabled by user."   >> ${SELLLOGFILE}
 
         elif [ "${1}" == "ETH" ];then
                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1} to recalc selling." >> ${SELLLOGFILE}
@@ -1187,7 +1187,7 @@ elif [ "${1}" = "scan" ]; then
         #Compare each LAST_PRICE with R_LAST_SELL of each crypto currency. If its 3% above an alert by email is sent just once.
         checkTimeToSell ${BCH_R_LAST_SELL} ${BCH_LAST_PRICE} "BCH"
         checkTimeToSell ${BTC_R_LAST_SELL} ${BTC_LAST_PRICE} "BTC"
-        checkTimeToSell ${CHZ_R_LAST_SELL} ${CHZ_LAST_PRICE} "CHZ"
+        checkTimeToSell ${XRP_R_LAST_SELL} ${XRP_LAST_PRICE} "XRP"
         checkTimeToSell ${ETH_R_LAST_SELL} ${ETH_LAST_PRICE} "ETH"
         checkTimeToSell ${LTC_R_LAST_SELL} ${LTC_LAST_PRICE} "LTC"
 
