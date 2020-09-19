@@ -629,7 +629,23 @@ function interativeMode {
                                 echo -n ""
                                 read OPTMENU;;
 
-                                7)clear
+                                7)
+				echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF: Show all variables values per crypto currency"   >> ${LOGFILE}	
+                                clear
+                                echo "#################### MBC ADMIN ####################"
+                                echo "#                                                 #"
+                                echo "#      Choose the crypto Currency below:          #"
+                                echo "#   1 - BCH                                       #"
+                                echo "#   2 - BTC                                       #"
+                                echo "#   3 - CHZ                                       #"
+                                echo "#   4 - ETH                                       #"
+                                echo "#   5 - LTC                                       #"
+                                echo "#                                                 #"
+                                echo "###################################################"
+                                echo -n ""
+                                read OPTMENU;;
+
+                                8)clear
                                 clear
                                 break;;
 
@@ -815,6 +831,10 @@ function recalcBuying {
                 JSON_UPDATE=`jq --arg rprice "${ETH_PRICE}" '.mbc.currency.eth.buy.rprice = $rprice' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new ETH reference price is ${ETH_PRICE}"   >> ${BUYLOGFILE}
+                ETH_R_LAST_SELL=ETH_PRICE
+                JSON_UPDATE=`jq --arg rlastsell "${ETH_R_LAST_SELL}" '.mbc.currency.eth.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                echo $JSON_UPDATE > ${CONFIG_FILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new R_LAST_SELL price from ETH has a new reference price: ${ETH_R_LAST_SELL}"   >> ${BUYLOGFILE}
 
                 ETH_TOTAL_PRICE=`bc <<< "scale=2;(${ETH_TOTAL_PRICE}+(${2}*${3}))"`
                 ETH_TOTAL_PRICE=$( printf "%.8f" $ETH_TOTAL_PRICE )       
@@ -829,7 +849,7 @@ function recalcBuying {
                 echo "ETH_R_LAST_SELL=$ETH_R_LAST_SELL"
                 echo "ETH_TOTAL_PRICE=$ETH_TOTAL_PRICE"
                 echo "ETH_PRICE=$ETH_PRICE"
-                
+
                 exit 0
 
             #SELL
