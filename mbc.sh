@@ -428,14 +428,14 @@ function interativeMode {
 
                 clear
                 echo "#################### MBC ADMIN ####################"
-                echo "#                                                 #"
                 echo "#  1 - Enable SELL's alerts for all currencies    #"
                 echo "#  2 - Set up a new value to LAST SELL            #"
                 echo "#  3 - Shows 10 last lines from log file          #"
                 echo "#  4 - Shows 10 last buy operations               #"
                 echo "#  5 - Shows 10 last sell operation               #"
                 echo "#  6 - Shows 10 last alerts sent by email         #"
-                echo "#  7 - Exit                                       #"
+                echo "#  7 - Show crypto currencies variables values    #"
+                echo "#  8 - Exit                                       #"
                 echo "###################################################"
                 echo -n "Choose an option number:"
                 read OPTMENU
@@ -632,18 +632,100 @@ function interativeMode {
                                 7)
 				echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF: Show all variables values per crypto currency"   >> ${LOGFILE}	
                                 clear
-                                echo "#################### MBC ADMIN ####################"
-                                echo "#                                                 #"
-                                echo "#      Choose the crypto Currency below:          #"
-                                echo "#   1 - BCH                                       #"
-                                echo "#   2 - BTC                                       #"
-                                echo "#   3 - CHZ                                       #"
-                                echo "#   4 - ETH                                       #"
-                                echo "#   5 - LTC                                       #"
-                                echo "#                                                 #"
-                                echo "###################################################"
-                                echo -n ""
-                                read OPTMENU;;
+                                while true ; do
+                                        #flag to ensure all inputed numbers are numbers type
+                                        isNUMERO=true
+                                        loadConfigFile
+                                        clear
+                                        echo "#################### MBC ADMIN ####################"
+                                        echo "#                                                 #"
+                                        echo "#      Choose the crypto Currency below:          #"
+                                        echo "#   1 - BCH                                       #"
+                                        echo "#   2 - BTC                                       #"
+                                        echo "#   3 - CHZ                                       #"
+                                        echo "#   4 - ETH                                       #"
+                                        echo "#   5 - LTC                                       #"
+                                        echo "#   6 - Back to main menu                         #"
+                                        echo "###################################################"
+                                        echo -n "Choose an option number:"
+                                        read OPTMENU
+                                        echo $OPTMENU | grep -q -v "[^0-9]"
+
+                                        if [ $? -ne 0 ];then
+                                                isNUMERO=false
+                                        fi
+
+                                        if [ isNUMERO ];then
+                                                case $OPTMENU in
+                                                        1) 
+                                                           #BUY
+                                                           echo "BCH_QTY=${BCH_QTY}"
+                                                           echo "BCH_PRICE=${BCH_PRICE}"
+                                                           echo "BCH_TOTAL_PRICE=${BCH_TOTAL_PRICE}"
+                                                           #SELL
+                                                           echo "BCH_R_LAST_SELL=${BCH_R_LAST_SELL}"
+                                                           echo "BCH_TOTAL_LAST_SELL=${BCH_TOTAL_LAST_SELL}"
+                                                           echo "BCH_FLAG_ALERT=${BCH_FLAG_ALERT}"
+                                                        2) 
+                                                           #BUY
+                                                           echo "BTC_QTY=${BTC_QTY}"
+                                                           echo "BTC_PRICE=${BTC_PRICE}"
+                                                           echo "BTC_TOTAL_PRICE=${BTC_TOTAL_PRICE}"
+                                                           #SELL
+                                                           echo "BTC_R_LAST_SELL=${BTC_R_LAST_SELL}"
+                                                           echo "BTC_TOTAL_LAST_SELL=${BTC_TOTAL_LAST_SELL}"
+                                                           echo "BTC_FLAG_ALERT=${BTC_FLAG_ALERT}"
+
+                                                        3) 
+                                                           #BUY
+                                                           echo "CHZ_QTY=${CHZ_QTY}"
+                                                           echo "CHZ_PRICE=${CHZ_PRICE}"
+                                                           echo "CHZ_TOTAL_PRICE=${CHZ_TOTAL_PRICE}"
+                                                           #SELL
+                                                           echo "CHZ_R_LAST_SELL=${CHZ_R_LAST_SELL}"
+                                                           echo "CHZ_TOTAL_LAST_SELL=${CHZ_TOTAL_LAST_SELL}"
+                                                           echo "CHZ_FLAG_ALERT=${CHZ_FLAG_ALERT}"
+                                                        4) 
+                                                           #BUY
+                                                           echo "ETH_QTY=${ETH_QTY}"
+                                                           echo "ETH_PRICE=${ETH_PRICE}"
+                                                           echo "ETH_TOTAL_PRICE=${ETH_TOTAL_PRICE}"
+                                                           #SELL
+                                                           echo "ETH_R_LAST_SELL=${ETH_R_LAST_SELL}"
+                                                           echo "ETH_TOTAL_LAST_SELL=${ETH_TOTAL_LAST_SELL}"
+                                                           echo "ETH_FLAG_ALERT=${ETH_FLAG_ALERT}"
+                                                        5) 
+                                                           #BUY
+                                                           echo "LTC_QTY=${LTC_QTY}"
+                                                           echo "LTC_PRICE=${LTC_PRICE}"
+                                                           echo "LTC_TOTAL_PRICE=${LTC_TOTAL_PRICE}"
+                                                           #SELL
+                                                           echo "LTC_R_LAST_SELL=${LTC_R_LAST_SELL}"
+                                                           echo "LTC_TOTAL_LAST_SELL=${LTC_TOTAL_LAST_SELL}"
+                                                           echo "LTC_FLAG_ALERT=${LTC_FLAG_ALERT}"
+                                                        
+                                                        6)clear
+                                                                clear
+                                                                break;;
+
+                                                        *)
+                                                                        echo "`date "+%m/%d/%Y  %H:%M:%S -  "`ERR: User has choosed an invalid option on interative menu."   >> ${LOGFILE}
+                                                                        clear
+                                                                        echo "#################### MBC ADMIN ####################"
+                                                                        echo "#                                                 #"
+                                                                        echo "#                                                 #"
+                                                                        echo "#                                                 #"
+                                                                        echo "#               Invalid option!                   #"
+                                                                        echo "#       Press ENTER and try again                 #"
+                                                                        echo "#                                                 #"
+                                                                        echo "#                                                 #"
+                                                                        echo "#                                                 #"
+                                                                        echo "###################################################"
+                                                                        echo -n ""
+                                                                        read OPTMENU;;
+                                                esac
+                                        fi
+                                done
 
                                 8)clear
                                 clear
@@ -688,25 +770,32 @@ function recalcBuying {
         #${1}: Currency type  ${2} quantity bought ${3} price paid
         if [ "${1}" == "BCH" ];then
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1}." >> ${BUYLOGFILE}
-
             #BUY
+                BCH_TOTAL_PRICE=`bc <<< "scale=2;($BCH_QTY*$BCH_R_LAST_SELL)"`
+                BCH_TOTAL_PRICE=$( printf "%.8f" $BCH_TOTAL_PRICE )
+
                 BCH_QTY=`bc <<< "scale=2;($BCH_QTY+${2})"`
                 BCH_QTY=$( printf "%.8f" $BCH_QTY )
                 JSON_UPDATE=`jq --arg rqty "${BCH_QTY}" '.mbc.currency.bch.buy.rqty = $rqty' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference quantitiy is ${BCH_QTY}."   >> ${BUYLOGFILE}
-
-                BCH_PRICE=`bc <<< "scale=2;($BCH_TOTAL_PRICE+(${2}*${3}))/(${BCH_QTY}+${2})"`
+ 
+                BCH_PRICE=`bc <<< "scale=2;($BCH_TOTAL_PRICE+(${2}*${3}))/(${BCH_QTY})"`
                 BCH_PRICE=$( printf "%.8f" $BCH_PRICE )
                 JSON_UPDATE=`jq --arg rprice "${BCH_PRICE}" '.mbc.currency.bch.buy.rprice = $rprice' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference price is ${BCH_PRICE}"   >> ${BUYLOGFILE}
+                BCH_R_LAST_SELL=${BCH_PRICE}
+                JSON_UPDATE=`jq --arg rlastsell "${BCH_R_LAST_SELL}" '.mbc.currency.bch.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                echo $JSON_UPDATE > ${CONFIG_FILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new R_LAST_SELL price from BCH has a new reference price: ${BCH_R_LAST_SELL}"   >> ${BUYLOGFILE}
 
                 BCH_TOTAL_PRICE=`bc <<< "scale=2;(${BCH_TOTAL_PRICE}+(${2}*${3}))"`
                 BCH_TOTAL_PRICE=$( printf "%.8f" $BCH_TOTAL_PRICE )       
                 JSON_UPDATE=`jq --arg rtotalprice "${BCH_TOTAL_PRICE}" '.mbc.currency.bch.buy.rtotalprice = $rtotalprice' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference total price is ${BCH_TOTAL_PRICE}"   >> ${BUYLOGFILE}
+
             #SELL
                 BCH_TOTAL_LAST_SELL=`bc <<< "scale=2;(${BCH_QTY}*${BCH_R_LAST_SELL})+(${2}*${3})"`
                 BCH_TOTAL_LAST_SELL=$( printf "%.8f" $BCH_TOTAL_LAST_SELL )
@@ -729,23 +818,31 @@ function recalcBuying {
         elif [ "${1}" == "BTC" ];then
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1}." >> ${BUYLOGFILE}
             #BUY
+                BTC_TOTAL_PRICE=`bc <<< "scale=2;($BTC_QTY*$BTC_R_LAST_SELL)"`
+                BTC_TOTAL_PRICE=$( printf "%.8f" $BTC_TOTAL_PRICE )
+
                 BTC_QTY=`bc <<< "scale=2;($BTC_QTY+${2})"`
                 BTC_QTY=$( printf "%.8f" $BTC_QTY )
                 JSON_UPDATE=`jq --arg rqty "${BTC_QTY}" '.mbc.currency.btc.buy.rqty = $rqty' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BTC reference quantitiy is ${BTC_QTY}."   >> ${BUYLOGFILE}
-
-                BTC_PRICE=`bc <<< "scale=2;($BTC_TOTAL_PRICE+(${2}*${3}))/(${BTC_QTY}+${2})"`
+ 
+                BTC_PRICE=`bc <<< "scale=2;($BTC_TOTAL_PRICE+(${2}*${3}))/(${BTC_QTY})"`
                 BTC_PRICE=$( printf "%.8f" $BTC_PRICE )
                 JSON_UPDATE=`jq --arg rprice "${BTC_PRICE}" '.mbc.currency.btc.buy.rprice = $rprice' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BTC reference price is ${BTC_PRICE}"   >> ${BUYLOGFILE}
+                BTC_R_LAST_SELL=${BTC_PRICE}
+                JSON_UPDATE=`jq --arg rlastsell "${BTC_R_LAST_SELL}" '.mbc.currency.btc.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                echo $JSON_UPDATE > ${CONFIG_FILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new R_LAST_SELL price from BTC has a new reference price: ${BTC_R_LAST_SELL}"   >> ${BUYLOGFILE}
 
                 BTC_TOTAL_PRICE=`bc <<< "scale=2;(${BTC_TOTAL_PRICE}+(${2}*${3}))"`
                 BTC_TOTAL_PRICE=$( printf "%.8f" $BTC_TOTAL_PRICE )       
                 JSON_UPDATE=`jq --arg rtotalprice "${BTC_TOTAL_PRICE}" '.mbc.currency.btc.buy.rtotalprice = $rtotalprice' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BTC reference total price is ${BTC_TOTAL_PRICE}"   >> ${BUYLOGFILE}
+
             #SELL
                 BTC_TOTAL_LAST_SELL=`bc <<< "scale=2;(${BTC_QTY}*${BTC_R_LAST_SELL})+(${2}*${3})"`
                 BTC_TOTAL_LAST_SELL=$( printf "%.8f" $BTC_TOTAL_LAST_SELL )
@@ -768,17 +865,24 @@ function recalcBuying {
         elif [ "${1}" == "CHZ" ];then
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1}." >> ${BUYLOGFILE}
             #BUY
+                CHZ_TOTAL_PRICE=`bc <<< "scale=2;($CHZ_QTY*$CHZ_R_LAST_SELL)"`
+                CHZ_TOTAL_PRICE=$( printf "%.8f" $CHZ_TOTAL_PRICE )
+
                 CHZ_QTY=`bc <<< "scale=2;($CHZ_QTY+${2})"`
                 CHZ_QTY=$( printf "%.8f" $CHZ_QTY )
                 JSON_UPDATE=`jq --arg rqty "${CHZ_QTY}" '.mbc.currency.chz.buy.rqty = $rqty' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new CHZ reference quantitiy is ${CHZ_QTY}."   >> ${LOGFILE}
-
-                CHZ_PRICE=`bc <<< "scale=2;($CHZ_TOTAL_PRICE+(${2}*${3}))/(${CHZ_QTY}+${2})"`
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new CHZ reference quantitiy is ${CHZ_QTY}."   >> ${BUYLOGFILE}
+ 
+                CHZ_PRICE=`bc <<< "scale=2;($CHZ_TOTAL_PRICE+(${2}*${3}))/(${CHZ_QTY})"`
                 CHZ_PRICE=$( printf "%.8f" $CHZ_PRICE )
                 JSON_UPDATE=`jq --arg rprice "${CHZ_PRICE}" '.mbc.currency.chz.buy.rprice = $rprice' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new CHZ reference price is ${CHZ_PRICE}"   >> ${BUYLOGFILE}
+                CHZ_R_LAST_SELL=${CHZ_PRICE}
+                JSON_UPDATE=`jq --arg rlastsell "${CHZ_R_LAST_SELL}" '.mbc.currency.chz.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                echo $JSON_UPDATE > ${CONFIG_FILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new R_LAST_SELL price from CHZ has a new reference price: ${CHZ_R_LAST_SELL}"   >> ${BUYLOGFILE}
 
                 CHZ_TOTAL_PRICE=`bc <<< "scale=2;(${CHZ_TOTAL_PRICE}+(${2}*${3}))"`
                 CHZ_TOTAL_PRICE=$( printf "%.8f" $CHZ_TOTAL_PRICE )       
@@ -808,15 +912,6 @@ function recalcBuying {
         elif [ "${1}" == "ETH" ];then
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1}." >> ${BUYLOGFILE}
             #BUY
-                echo "*************** INICIO BUY ****************"
-                echo "2=${2}"
-                echo "3=${3}"
-                echo "ETH_QTY=$ETH_QTY"
-                echo "ETH_R_LAST_SELL=$ETH_R_LAST_SELL"
-                echo "ETH_TOTAL_PRICE=$ETH_TOTAL_PRICE"
-                echo "ETH_PRICE=$ETH_PRICE"
-
-
                 ETH_TOTAL_PRICE=`bc <<< "scale=2;($ETH_QTY*$ETH_R_LAST_SELL)"`
                 ETH_TOTAL_PRICE=$( printf "%.8f" $ETH_TOTAL_PRICE )
 
@@ -842,16 +937,6 @@ function recalcBuying {
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new ETH reference total price is ${ETH_TOTAL_PRICE}"   >> ${BUYLOGFILE}
 
-                echo "*************** FIM BUY ****************"
-                echo "2=${2}"
-                echo "3=${3}"
-                echo "ETH_QTY=$ETH_QTY"
-                echo "ETH_R_LAST_SELL=$ETH_R_LAST_SELL"
-                echo "ETH_TOTAL_PRICE=$ETH_TOTAL_PRICE"
-                echo "ETH_PRICE=$ETH_PRICE"
-
-                exit 0
-
             #SELL
                 ETH_TOTAL_LAST_SELL=`bc <<< "scale=2;(${ETH_QTY}*${ETH_R_LAST_SELL})+(${2}*${3})"`
                 ETH_TOTAL_LAST_SELL=$( printf "%.8f" $ETH_TOTAL_LAST_SELL )
@@ -875,17 +960,24 @@ function recalcBuying {
         elif [ "${1}" == "LTC" ];then
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1}." >> ${BUYLOGFILE}
             #BUY
+                LTC_TOTAL_PRICE=`bc <<< "scale=2;($LTC_QTY*$LTC_R_LAST_SELL)"`
+                LTC_TOTAL_PRICE=$( printf "%.8f" $LTC_TOTAL_PRICE )
+
                 LTC_QTY=`bc <<< "scale=2;($LTC_QTY+${2})"`
                 LTC_QTY=$( printf "%.8f" $LTC_QTY )
                 JSON_UPDATE=`jq --arg rqty "${LTC_QTY}" '.mbc.currency.ltc.buy.rqty = $rqty' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new LTC reference quantitiy is ${LTC_QTY}."   >> ${BUYLOGFILE}
-
-                LTC_PRICE=`bc <<< "scale=2;($LTC_TOTAL_PRICE+(${2}*${3}))/(${LTC_QTY}+${2})"`
+ 
+                LTC_PRICE=`bc <<< "scale=2;($LTC_TOTAL_PRICE+(${2}*${3}))/(${LTC_QTY})"`
                 LTC_PRICE=$( printf "%.8f" $LTC_PRICE )
                 JSON_UPDATE=`jq --arg rprice "${LTC_PRICE}" '.mbc.currency.ltc.buy.rprice = $rprice' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new LTC reference price is ${LTC_PRICE}"   >> ${BUYLOGFILE}
+                LTC_R_LAST_SELL=${LTC_PRICE}
+                JSON_UPDATE=`jq --arg rlastsell "${LTC_R_LAST_SELL}" '.mbc.currency.ltc.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                echo $JSON_UPDATE > ${CONFIG_FILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new R_LAST_SELL price from LTC has a new reference price: ${LTC_R_LAST_SELL}"   >> ${BUYLOGFILE}
 
                 LTC_TOTAL_PRICE=`bc <<< "scale=2;(${LTC_TOTAL_PRICE}+(${2}*${3}))"`
                 LTC_TOTAL_PRICE=$( printf "%.8f" $LTC_TOTAL_PRICE )       
