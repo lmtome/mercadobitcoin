@@ -97,11 +97,11 @@ LTC_LAST_PRICE=0
 
 #OK This function is called always the user does not choose an expected option and shows the script usage.
 function usageScript {
-        echo "Usage: ${0} [ -h | scan | menu | ( buy | sell )] <BCH|BTC|XRP|ETH|LTC> <qty> <price> ]"
+        echo "Usage: ${0} [ -h | scan | scanbuy | menu | ( buy | sell )] <BCH|BTC|XRP|ETH|LTC> <qty> <price> ]"
         echo ""
         echo "-h           show the command usage."
         echo ""
-        echo "scan - check for good prices to buy one of these crypto currencies below: "
+        echo "scan - check for good prices to sell for one of these crypto currencies: "
         echo "BCH : Bitcoin Cash"
         echo "BTC : Bitcoin"
         echo "XRP : Ripple"
@@ -266,7 +266,7 @@ function initialSetup {
 		echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF: A config file has been saved with all currencies prices."  >> ${LOGFILE}
 
                 #Save new data input by user
-                echo -e "{\"mbc\":{\"currency\":{\"bch\":{\"buy\":{\"rqty\":\"${BCH_QTY}\",\"rprice\":\"${BCH_PRICE}\",\"rtotalprice\":\"${BCH_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${BCH_PRICE}\",\"rtotallastsell\":\"${BCH_PRICE}\",\"flagalert\":\"1\"}},\"btc\":{\"buy\":{\"rqty\":\"${BTC_QTY}\",\"rprice\":\"${BTC_PRICE}\",\"rtotalprice\":\"${BTC_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${BTC_PRICE}\",\"rtotallastsell\":\"${BTC_PRICE}\",\"flagalert\":\"1\"}},\"XRP\":{\"buy\":{\"rqty\":\"${XRP_QTY}\",\"rprice\":\"${XRP_PRICE}\",\"rtotalprice\":\"${XRP_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${XRP_PRICE}\",\"rtotallastsell\":\"${BCH_PRICE}\",\"flagalert\":\"1\"}},\"eth\":{\"buy\":{\"rqty\":\"${ETH_QTY}\",\"rprice\":\"${ETH_PRICE}\",\"rtotalprice\":\"${ETH_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${ETH_PRICE}\",\"rtotallastsell\":\"${ETH_PRICE}\",\"flagalert\":\"1\"}},\"ltc\":{\"buy\":{\"rqty\":\"${LTC_QTY}\",\"rprice\":\"${LTC_PRICE}\",\"rtotalprice\":\"${LTC_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${LTC_PRICE}\",\"rtotallastsell\":\"${LTC_PRICE}\",\"flagalert\":\"1\"}}},\"adminconfig\":{\"flagfirsttime\":\"0\"}}}" > ${CONFIG_FILE}
+                echo -e "{\"mbc\":{\"currency\":{\"bch\":{\"buy\":{\"rqty\":\"${BCH_QTY}\",\"rprice\":\"${BCH_PRICE}\",\"rtotalprice\":\"${BCH_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${BCH_PRICE}\",\"rtotallastsell\":\"${BCH_PRICE}\",\"flagalert\":\"1\"}},\"btc\":{\"buy\":{\"rqty\":\"${BTC_QTY}\",\"rprice\":\"${BTC_PRICE}\",\"rtotalprice\":\"${BTC_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${BTC_PRICE}\",\"rtotallastsell\":\"${BTC_PRICE}\",\"flagalert\":\"1\"}},\"xrp\":{\"buy\":{\"rqty\":\"${XRP_QTY}\",\"rprice\":\"${XRP_PRICE}\",\"rtotalprice\":\"${XRP_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${XRP_PRICE}\",\"rtotallastsell\":\"${BCH_PRICE}\",\"flagalert\":\"1\"}},\"eth\":{\"buy\":{\"rqty\":\"${ETH_QTY}\",\"rprice\":\"${ETH_PRICE}\",\"rtotalprice\":\"${ETH_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${ETH_PRICE}\",\"rtotallastsell\":\"${ETH_PRICE}\",\"flagalert\":\"1\"}},\"ltc\":{\"buy\":{\"rqty\":\"${LTC_QTY}\",\"rprice\":\"${LTC_PRICE}\",\"rtotalprice\":\"${LTC_TOTAL_PRICE}\"},\"sell\":{\"rlastsell\":\"${LTC_PRICE}\",\"rtotallastsell\":\"${LTC_PRICE}\",\"flagalert\":\"1\"}}},\"adminconfig\":{\"flagfirsttime\":\"0\"}}}" > ${CONFIG_FILE}
 
         else
 
@@ -666,6 +666,8 @@ function interativeMode {
                                                            echo "BCH_R_LAST_SELL=${BCH_R_LAST_SELL}"
                                                            echo "BCH_TOTAL_LAST_SELL=${BCH_TOTAL_LAST_SELL}"
                                                            echo "BCH_FLAG_ALERT=${BCH_FLAG_ALERT}"
+                                                           read OPTMENU;;
+
                                                         2) 
                                                            #BUY
                                                            echo "BTC_QTY=${BTC_QTY}"
@@ -675,6 +677,7 @@ function interativeMode {
                                                            echo "BTC_R_LAST_SELL=${BTC_R_LAST_SELL}"
                                                            echo "BTC_TOTAL_LAST_SELL=${BTC_TOTAL_LAST_SELL}"
                                                            echo "BTC_FLAG_ALERT=${BTC_FLAG_ALERT}"
+                                                           read OPTMENU;;
 
                                                         3) 
                                                            #BUY
@@ -685,6 +688,8 @@ function interativeMode {
                                                            echo "XRP_R_LAST_SELL=${XRP_R_LAST_SELL}"
                                                            echo "XRP_TOTAL_LAST_SELL=${XRP_TOTAL_LAST_SELL}"
                                                            echo "XRP_FLAG_ALERT=${XRP_FLAG_ALERT}"
+                                                           read OPTMENU;;
+
                                                         4) 
                                                            #BUY
                                                            echo "ETH_QTY=${ETH_QTY}"
@@ -694,6 +699,8 @@ function interativeMode {
                                                            echo "ETH_R_LAST_SELL=${ETH_R_LAST_SELL}"
                                                            echo "ETH_TOTAL_LAST_SELL=${ETH_TOTAL_LAST_SELL}"
                                                            echo "ETH_FLAG_ALERT=${ETH_FLAG_ALERT}"
+                                                           read OPTMENU;;
+
                                                         5) 
                                                            #BUY
                                                            echo "LTC_QTY=${LTC_QTY}"
@@ -703,10 +710,11 @@ function interativeMode {
                                                            echo "LTC_R_LAST_SELL=${LTC_R_LAST_SELL}"
                                                            echo "LTC_TOTAL_LAST_SELL=${LTC_TOTAL_LAST_SELL}"
                                                            echo "LTC_FLAG_ALERT=${LTC_FLAG_ALERT}"
+                                                           read OPTMENU;;
                                                         
                                                         6)clear
-                                                                clear
-                                                                break;;
+                                                          clear
+                                                          break;;
 
                                                         *)
                                                                         echo "`date "+%m/%d/%Y  %H:%M:%S -  "`ERR: User has choosed an invalid option on interative menu."   >> ${LOGFILE}
@@ -725,9 +733,10 @@ function interativeMode {
                                                                         read OPTMENU;;
                                                 esac
                                         fi
-                                done
+                                done;;
 
-                                8)clear
+                                8)
+                                clear
                                 clear
                                 break;;
 
@@ -1149,6 +1158,54 @@ function recalcSelling {
 
 }
 
+function checkTimeToBuying {
+
+        #Getting DELTA from each crypto coin
+        BCH_DELTA_BUY=`bc <<< "((${BCH_LAST_PRICE}/${BCH_R_LAST_SELL})-1)"`
+        BCH_DELTA_BUY=$( printf "%.8f" $BCH_DELTA_BUY )
+
+        BTC_DELTA_BUY=`bc <<< "((${BTC_LAST_PRICE}/${BTC_R_LAST_SELL})-1)"`
+        BTC_DELTA_BUY=$( printf "%.8f" $BTC_DELTA_BUY )
+
+        XRP_DELTA_BUY=`bc <<< "((${XRP_LAST_PRICE}/${XRP_R_LAST_SELL})-1)"`
+        XRP_DELTA_BUY=$( printf "%.8f" $XRP_DELTA_BUY )
+
+        ETH_DELTA_BUY=`bc <<< "((${ETH_LAST_PRICE}/${ETH_R_LAST_SELL})-1)"`
+        ETH_DELTA_BUY=$( printf "%.8f" $ETH_DELTA_BUY )
+
+        LTC_DELTA_BUY=`bc <<< "((${LTC_LAST_PRICE}/${LTC_R_LAST_SELL})-1)"`
+        LTC_DELTA_BUY=$( printf "%.8f" $LTC_DELTA_BUY )
+        
+        #Identifying which one is smaller.
+        #Considering BCH=0, BTC=1, XRP=2, ETH=3, LTC=4
+        VALUES[0]=${BCH_DELTA_BUY}
+        VALUES[1]=${BTC_DELTA_BUY}
+        VALUES[2]=${XRP_DELTA_BUY}
+        VALUES[3]=${ETH_DELTA_BUY}
+        VALUES[4]=${LTC_DELTA_BUY}
+
+        echo "BCH=${BCH_DELTA_BUY}"
+        echo "BTC=${BTC_DELTA_BUY}"
+        echo "XRP=${XRP_DELTA_BUY}"
+        echo "ETH=${ETH_DELTA_BUY}"
+        echo "LTC=${LTC_DELTA_BUY}"
+
+        for ((x=0; x < ${#VALUES[*]}; x++)) ; do
+                count=0
+                for ((y=0; y < ${#VALUES[*]}; y++)) ; do
+
+                        FLAG_SMALLER=`echo ${VALUES[$x]}'<'${VALUES[$y]} | bc -l`
+                        
+                        if [ ${FLAG_SMALLER} -ne 0 ]; then
+                                count=`bc <<< "${count}+1"`
+                        fi
+                done
+
+                if [ $count -ge 4 ]; then
+                        echo "Next Buy is crypto currency with DELTA: ${VALUES[$x]}"
+                fi
+        done
+}
 
 
 
@@ -1194,6 +1251,17 @@ elif [ "${1}" = "scan" ]; then
         #Wait 5 seconds by default before start the loop again.
         sleep ${WAITING}
    done
+
+elif [ "${1}" = "scanbuy" ]; then
+
+        #Starts loading an initial setup to the script runs properly
+        initialSetup
+
+        #Load LAST_PRICE from Mecardobitcoin website API
+        checkNewPricesUpdates
+
+        #Compare each LAST_PRICE with R_LAST_SELL of each crypto currency. If its 3% above an alert by email is sent just once.
+        checkTimeToBuying
 
 elif [ "${1}" = "menu" ]; then
         #check if config file exists to load all its variables values or create a new one.

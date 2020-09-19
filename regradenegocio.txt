@@ -123,6 +123,19 @@ SELL
     *caso o usuario nao utilize o SELL o alerta so voltara a funcionar se o usuario habilitar via menu*
 
 
+SCANBUY
+FYI -- para criar o scan de buy vc vai precisar criar uma variavel chamada ETH_DELTA_BUY que faz:
+ETH_DELTA_BUY = (preco atual moeda / R_LAST_SELL) -1
+Isso para cada moeda.
+Em seguida vc precisa fazer o scan, ou seja, vc precisa saber de todos os xxx_DELTA_BUY qual é o menor deles. Esse que for menor é o next buy
+
+
+O cálculo é somente isso que tá acima. Dae quando eu rodar :
+./mbc.sh scanbuy o sistema precisa chamar a função, fazer esse calculo que falei acima e printar:
+O valor de delta de cada moeda;
+O Next Buy, indicando qual delas possui o menor valor nominal de delta
+Next Buy = Moeda (BTC / LTC / XRP etc)
+Feito isso o usuário só precisa rodar o modulo de buy e informar a quantidade e o preço de compra. O resto é repetição do que já vimos até aqui com Sell e Buy.
 
 
 
