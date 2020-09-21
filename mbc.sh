@@ -657,7 +657,8 @@ function interativeMode {
 
                                         if [ isNUMERO ];then
                                                 case $OPTMENU in
-                                                        1) 
+                                                        1) #Starts loading an initial setup to the script runs properly
+                                                           initialSetup
                                                            #BUY
                                                            echo "BCH_QTY=${BCH_QTY}"
                                                            echo "BCH_PRICE=${BCH_PRICE}"
@@ -668,7 +669,8 @@ function interativeMode {
                                                            echo "BCH_FLAG_ALERT=${BCH_FLAG_ALERT}"
                                                            read OPTMENU;;
 
-                                                        2) 
+                                                        2) #Starts loading an initial setup to the script runs properly
+                                                           initialSetup
                                                            #BUY
                                                            echo "BTC_QTY=${BTC_QTY}"
                                                            echo "BTC_PRICE=${BTC_PRICE}"
@@ -679,7 +681,8 @@ function interativeMode {
                                                            echo "BTC_FLAG_ALERT=${BTC_FLAG_ALERT}"
                                                            read OPTMENU;;
 
-                                                        3) 
+                                                        3) #Starts loading an initial setup to the script runs properly
+                                                           initialSetup
                                                            #BUY
                                                            echo "XRP_QTY=${XRP_QTY}"
                                                            echo "XRP_PRICE=${XRP_PRICE}"
@@ -690,7 +693,8 @@ function interativeMode {
                                                            echo "XRP_FLAG_ALERT=${XRP_FLAG_ALERT}"
                                                            read OPTMENU;;
 
-                                                        4) 
+                                                        4) #Starts loading an initial setup to the script runs properly
+                                                           initialSetup
                                                            #BUY
                                                            echo "ETH_QTY=${ETH_QTY}"
                                                            echo "ETH_PRICE=${ETH_PRICE}"
@@ -701,7 +705,8 @@ function interativeMode {
                                                            echo "ETH_FLAG_ALERT=${ETH_FLAG_ALERT}"
                                                            read OPTMENU;;
 
-                                                        5) 
+                                                        5) #Starts loading an initial setup to the script runs properly
+                                                           initialSetup
                                                            #BUY
                                                            echo "LTC_QTY=${LTC_QTY}"
                                                            echo "LTC_PRICE=${LTC_PRICE}"
