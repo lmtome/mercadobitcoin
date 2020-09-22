@@ -822,186 +822,156 @@ function recalcBuying {
         elif [ "${1}" == "BTC" ];then
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1}." >> ${BUYLOGFILE}
             #BUY
-                BTC_TOTAL_PRICE=`bc <<< "scale=2;($BTC_QTY*$BTC_R_LAST_SELL)"`
-                BTC_TOTAL_PRICE=$( printf "%.8f" $BTC_TOTAL_PRICE )
-                BTC_QTY=`bc <<< "scale=2;($BTC_QTY+${2})"`
-                BTC_QTY=$( printf "%.8f" $BTC_QTY )
-                JSON_UPDATE=`jq --arg rqty "${BTC_QTY}" '.mbc.currency.btc.buy.rqty = $rqty' ${CONFIG_FILE}`
+                BCH_R_QTY=`bc <<< "scale=2;($BCH_QTY+${2})"`
+                BCH_R_QTY=$( printf "%.8f" $BCH_R_QTY )
+                JSON_UPDATE=`jq --arg rqty "${BCH_R_QTY}" '.mbc.currency.bch.buy.rqty = $rqty' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BTC reference quantitiy is ${BTC_QTY}."   >> ${BUYLOGFILE}
- 
-                BTC_PRICE=`bc <<< "scale=2;($BTC_TOTAL_PRICE+(${2}*${3}))/(${BTC_QTY})"`
-                BTC_PRICE=$( printf "%.8f" $BTC_PRICE )
-                JSON_UPDATE=`jq --arg rprice "${BTC_PRICE}" '.mbc.currency.btc.buy.rprice = $rprice' ${CONFIG_FILE}`
-                echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BTC reference price is ${BTC_PRICE}"   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference quantitiy is ${BCH_R_QTY}."   >> ${BUYLOGFILE}
 
-                BTC_R_LAST_SELL=${BTC_PRICE}
-                JSON_UPDATE=`jq --arg rlastsell "${BTC_R_LAST_SELL}" '.mbc.currency.btc.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                BCH_PRICE=`bc <<< "scale=2;($BCH_TOTAL_PRICE+(${2}*${3}))/($BCH_QTY+${2})"`
+                BCH_PRICE=$( printf "%.8f" $BCH_PRICE )
+                JSON_UPDATE=`jq --arg rprice "${BCH_PRICE}" '.mbc.currency.bch.buy.rprice = $rprice' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new R_LAST_SELL price from BTC has a new reference price: ${BTC_R_LAST_SELL}"   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference price is ${BCH_PRICE}"   >> ${BUYLOGFILE}
 
-                BTC_TOTAL_PRICE=`bc <<< "scale=2;(${BTC_TOTAL_PRICE}+(${2}*${3}))"`
-                BTC_TOTAL_PRICE=$( printf "%.8f" $BTC_TOTAL_PRICE )       
-                JSON_UPDATE=`jq --arg rtotalprice "${BTC_TOTAL_PRICE}" '.mbc.currency.btc.buy.rtotalprice = $rtotalprice' ${CONFIG_FILE}`
+                BCH_TOTAL_PRICE=`bc <<< "scale=2;(${BCH_R_QTY}*${BCH_PRICE})"`
+                BCH_TOTAL_PRICE=$( printf "%.8f" $BCH_TOTAL_PRICE )       
+                JSON_UPDATE=`jq --arg rtotalprice "${BCH_TOTAL_PRICE}" '.mbc.currency.bch.buy.rtotalprice = $rtotalprice' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BTC reference total price is ${BTC_TOTAL_PRICE}"   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference total price is ${BCH_TOTAL_PRICE}"   >> ${BUYLOGFILE}
             #SELL
-                BTC_TOTAL_LAST_SELL=`bc <<< "scale=2;(${BTC_QTY}*${BTC_R_LAST_SELL})+(${2}*${3})"`
-                BTC_TOTAL_LAST_SELL=$( printf "%.8f" $BTC_TOTAL_LAST_SELL )
-                JSON_UPDATE=`jq --arg rtotallastsell "${BTC_TOTAL_LAST_SELL}" '.mbc.currency.btc.sell.rtotallastsell = $rtotallastsell' ${CONFIG_FILE}`
+                BCH_R_LAST_SELL=`bc <<< "scale=2;(${BCH_TOTAL_LAST_SELL}+(${2}*${3}))/($BCH_QTY+${2})"`
+                BCH_R_LAST_SELL=$( printf "%.8f" $BCH_R_LAST_SELL )
+                JSON_UPDATE=`jq --arg rlastsell "${BCH_R_LAST_SELL}" '.mbc.currency.bch.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BTC reference total last sell price is ${BTC_TOTAL_LAST_SELL}"   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new R_LAST_SELL price from BCH has a new reference price: ${BCH_R_LAST_SELL}"   >> ${BUYLOGFILE}
 
-                BTC_R_LAST_SELL=`bc <<< "scale=2;(${BTC_TOTAL_PRICE}+(${2}*${3}))/(${BTC_QTY}+${2})"`
-                BTC_R_LAST_SELL=$( printf "%.8f" $BTC_R_LAST_SELL )
-                JSON_UPDATE=`jq --arg rlastsell "${BTC_R_LAST_SELL}" '.mbc.currency.btc.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                BCH_TOTAL_LAST_SELL=`bc <<< "scale=2;(${BCH_R_QTY}*${BCH_R_LAST_SELL})"`
+                BCH_TOTAL_LAST_SELL=$( printf "%.8f" $BCH_TOTAL_LAST_SELL )
+                JSON_UPDATE=`jq --arg rtotallastsell "${BCH_TOTAL_LAST_SELL}" '.mbc.currency.bch.sell.rtotallastsell = $rtotallastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BTC reference last sell price is ${BTC_R_LAST_SELL}"   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference total last sell price is ${BCH_TOTAL_LAST_SELL}"   >> ${BUYLOGFILE}
 
-                BTC_FLAG_ALERT=1
+                BCH_FLAG_ALERT=1
                 #update JSON value
-                JSON_UPDATE=`jq --arg flagalert "${BTC_FLAG_ALERT}" '.mbc.currency.btc.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                JSON_UPDATE=`jq --arg flagalert "${BCH_FLAG_ALERT}" '.mbc.currency.bch.sell.flagalert = $flagalert' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`BTC Flag alert has been enabled by user."   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`BCH Flag alert has been enabled by user."   >> ${BUYLOGFILE}
         elif [ "${1}" == "XRP" ];then
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1}." >> ${BUYLOGFILE}
             #BUY
-                XRP_TOTAL_PRICE=`bc <<< "scale=2;($XRP_QTY*$XRP_R_LAST_SELL)"`
-                XRP_TOTAL_PRICE=$( printf "%.8f" $XRP_TOTAL_PRICE )
+                BCH_R_QTY=`bc <<< "scale=2;($BCH_QTY+${2})"`
+                BCH_R_QTY=$( printf "%.8f" $BCH_R_QTY )
+                JSON_UPDATE=`jq --arg rqty "${BCH_R_QTY}" '.mbc.currency.bch.buy.rqty = $rqty' ${CONFIG_FILE}`
+                echo $JSON_UPDATE > ${CONFIG_FILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference quantitiy is ${BCH_R_QTY}."   >> ${BUYLOGFILE}
 
-                XRP_QTY=`bc <<< "scale=2;($XRP_QTY+${2})"`
-                XRP_QTY=$( printf "%.8f" $XRP_QTY )
-                JSON_UPDATE=`jq --arg rqty "${XRP_QTY}" '.mbc.currency.xrp.buy.rqty = $rqty' ${CONFIG_FILE}`
+                BCH_PRICE=`bc <<< "scale=2;($BCH_TOTAL_PRICE+(${2}*${3}))/($BCH_QTY+${2})"`
+                BCH_PRICE=$( printf "%.8f" $BCH_PRICE )
+                JSON_UPDATE=`jq --arg rprice "${BCH_PRICE}" '.mbc.currency.bch.buy.rprice = $rprice' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new XRP reference quantitiy is ${XRP_QTY}."   >> ${BUYLOGFILE}
- 
-                XRP_PRICE=`bc <<< "scale=2;($XRP_TOTAL_PRICE+(${2}*${3}))/(${XRP_QTY})"`
-                XRP_PRICE=$( printf "%.8f" $XRP_PRICE )
-                JSON_UPDATE=`jq --arg rprice "${XRP_PRICE}" '.mbc.currency.xrp.buy.rprice = $rprice' ${CONFIG_FILE}`
-                echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new XRP reference price is ${XRP_PRICE}"   >> ${BUYLOGFILE}
-                XRP_R_LAST_SELL=${XRP_PRICE}
-                JSON_UPDATE=`jq --arg rlastsell "${XRP_R_LAST_SELL}" '.mbc.currency.xrp.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
-                echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new R_LAST_SELL price from XRP has a new reference price: ${XRP_R_LAST_SELL}"   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference price is ${BCH_PRICE}"   >> ${BUYLOGFILE}
 
-                XRP_TOTAL_PRICE=`bc <<< "scale=2;(${XRP_TOTAL_PRICE}+(${2}*${3}))"`
-                XRP_TOTAL_PRICE=$( printf "%.8f" $XRP_TOTAL_PRICE )       
-                JSON_UPDATE=`jq --arg rtotalprice "${XRP_TOTAL_PRICE}" '.mbc.currency.xrp.buy.rtotalprice = $rtotalprice' ${CONFIG_FILE}`
+                BCH_TOTAL_PRICE=`bc <<< "scale=2;(${BCH_R_QTY}*${BCH_PRICE})"`
+                BCH_TOTAL_PRICE=$( printf "%.8f" $BCH_TOTAL_PRICE )       
+                JSON_UPDATE=`jq --arg rtotalprice "${BCH_TOTAL_PRICE}" '.mbc.currency.bch.buy.rtotalprice = $rtotalprice' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new XRP reference total price is ${XRP_TOTAL_PRICE}"   >> ${BUYLOGFILE}
-
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference total price is ${BCH_TOTAL_PRICE}"   >> ${BUYLOGFILE}
             #SELL
-                XRP_TOTAL_LAST_SELL=`bc <<< "scale=2;(${XRP_QTY}*${XRP_R_LAST_SELL})+(${2}*${3})"`
-                XRP_TOTAL_LAST_SELL=$( printf "%.8f" $XRP_TOTAL_LAST_SELL )
-                JSON_UPDATE=`jq --arg rtotallastsell "${XRP_TOTAL_LAST_SELL}" '.mbc.currency.xrp.sell.rtotallastsell = $rtotallastsell' ${CONFIG_FILE}`
+                BCH_R_LAST_SELL=`bc <<< "scale=2;(${BCH_TOTAL_LAST_SELL}+(${2}*${3}))/($BCH_QTY+${2})"`
+                BCH_R_LAST_SELL=$( printf "%.8f" $BCH_R_LAST_SELL )
+                JSON_UPDATE=`jq --arg rlastsell "${BCH_R_LAST_SELL}" '.mbc.currency.bch.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new XRP reference total last sell price is ${XRP_TOTAL_LAST_SELL}"   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new R_LAST_SELL price from BCH has a new reference price: ${BCH_R_LAST_SELL}"   >> ${BUYLOGFILE}
 
-                XRP_R_LAST_SELL=`bc <<< "scale=2;(${XRP_TOTAL_PRICE}+(${2}*${3}))/(${XRP_QTY}+${2})"`
-                XRP_R_LAST_SELL=$( printf "%.8f" $XRP_R_LAST_SELL )
-                JSON_UPDATE=`jq --arg rlastsell "${XRP_R_LAST_SELL}" '.mbc.currency.xrp.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                BCH_TOTAL_LAST_SELL=`bc <<< "scale=2;(${BCH_R_QTY}*${BCH_R_LAST_SELL})"`
+                BCH_TOTAL_LAST_SELL=$( printf "%.8f" $BCH_TOTAL_LAST_SELL )
+                JSON_UPDATE=`jq --arg rtotallastsell "${BCH_TOTAL_LAST_SELL}" '.mbc.currency.bch.sell.rtotallastsell = $rtotallastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new XRP reference last sell price is ${XRP_R_LAST_SELL}"   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference total last sell price is ${BCH_TOTAL_LAST_SELL}"   >> ${BUYLOGFILE}
 
-                XRP_FLAG_ALERT=1
+                BCH_FLAG_ALERT=1
                 #update JSON value
-                JSON_UPDATE=`jq --arg flagalert "${XRP_FLAG_ALERT}" '.mbc.currency.xrp.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                JSON_UPDATE=`jq --arg flagalert "${BCH_FLAG_ALERT}" '.mbc.currency.bch.sell.flagalert = $flagalert' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`XRP Flag alert has been enabled by user."   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`BCH Flag alert has been enabled by user."   >> ${BUYLOGFILE}
 
         elif [ "${1}" == "ETH" ];then
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1}." >> ${BUYLOGFILE}
             #BUY
-                ETH_TOTAL_PRICE=`bc <<< "scale=2;($ETH_QTY*$ETH_R_LAST_SELL)"`
-                ETH_TOTAL_PRICE=$( printf "%.8f" $ETH_TOTAL_PRICE )
+                BCH_R_QTY=`bc <<< "scale=2;($BCH_QTY+${2})"`
+                BCH_R_QTY=$( printf "%.8f" $BCH_R_QTY )
+                JSON_UPDATE=`jq --arg rqty "${BCH_R_QTY}" '.mbc.currency.bch.buy.rqty = $rqty' ${CONFIG_FILE}`
+                echo $JSON_UPDATE > ${CONFIG_FILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference quantitiy is ${BCH_R_QTY}."   >> ${BUYLOGFILE}
 
-                ETH_QTY=`bc <<< "scale=2;($ETH_QTY+${2})"`
-                ETH_QTY=$( printf "%.8f" $ETH_QTY )
-                JSON_UPDATE=`jq --arg rqty "${ETH_QTY}" '.mbc.currency.eth.buy.rqty = $rqty' ${CONFIG_FILE}`
+                BCH_PRICE=`bc <<< "scale=2;($BCH_TOTAL_PRICE+(${2}*${3}))/($BCH_QTY+${2})"`
+                BCH_PRICE=$( printf "%.8f" $BCH_PRICE )
+                JSON_UPDATE=`jq --arg rprice "${BCH_PRICE}" '.mbc.currency.bch.buy.rprice = $rprice' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new ETH reference quantitiy is ${ETH_QTY}."   >> ${BUYLOGFILE}
- 
-                ETH_PRICE=`bc <<< "scale=2;($ETH_TOTAL_PRICE+(${2}*${3}))/(${ETH_QTY})"`
-                ETH_PRICE=$( printf "%.8f" $ETH_PRICE )
-                JSON_UPDATE=`jq --arg rprice "${ETH_PRICE}" '.mbc.currency.eth.buy.rprice = $rprice' ${CONFIG_FILE}`
-                echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new ETH reference price is ${ETH_PRICE}"   >> ${BUYLOGFILE}
-                ETH_R_LAST_SELL=${ETH_PRICE}
-                JSON_UPDATE=`jq --arg rlastsell "${ETH_R_LAST_SELL}" '.mbc.currency.eth.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
-                echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new R_LAST_SELL price from ETH has a new reference price: ${ETH_R_LAST_SELL}"   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference price is ${BCH_PRICE}"   >> ${BUYLOGFILE}
 
-                ETH_TOTAL_PRICE=`bc <<< "scale=2;(${ETH_TOTAL_PRICE}+(${2}*${3}))"`
-                ETH_TOTAL_PRICE=$( printf "%.8f" $ETH_TOTAL_PRICE )       
-                JSON_UPDATE=`jq --arg rtotalprice "${ETH_TOTAL_PRICE}" '.mbc.currency.eth.buy.rtotalprice = $rtotalprice' ${CONFIG_FILE}`
+                BCH_TOTAL_PRICE=`bc <<< "scale=2;(${BCH_R_QTY}*${BCH_PRICE})"`
+                BCH_TOTAL_PRICE=$( printf "%.8f" $BCH_TOTAL_PRICE )       
+                JSON_UPDATE=`jq --arg rtotalprice "${BCH_TOTAL_PRICE}" '.mbc.currency.bch.buy.rtotalprice = $rtotalprice' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new ETH reference total price is ${ETH_TOTAL_PRICE}"   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference total price is ${BCH_TOTAL_PRICE}"   >> ${BUYLOGFILE}
             #SELL
-                ETH_TOTAL_LAST_SELL=`bc <<< "scale=2;(${ETH_QTY}*${ETH_R_LAST_SELL})+(${2}*${3})"`
-                ETH_TOTAL_LAST_SELL=$( printf "%.8f" $ETH_TOTAL_LAST_SELL )
-                JSON_UPDATE=`jq --arg rtotallastsell "${ETH_TOTAL_LAST_SELL}" '.mbc.currency.eth.sell.rtotallastsell = $rtotallastsell' ${CONFIG_FILE}`
+                BCH_R_LAST_SELL=`bc <<< "scale=2;(${BCH_TOTAL_LAST_SELL}+(${2}*${3}))/($BCH_QTY+${2})"`
+                BCH_R_LAST_SELL=$( printf "%.8f" $BCH_R_LAST_SELL )
+                JSON_UPDATE=`jq --arg rlastsell "${BCH_R_LAST_SELL}" '.mbc.currency.bch.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new ETH reference total last sell price is ${ETH_TOTAL_LAST_SELL}"   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new R_LAST_SELL price from BCH has a new reference price: ${BCH_R_LAST_SELL}"   >> ${BUYLOGFILE}
 
-                ETH_R_LAST_SELL=`bc <<< "scale=2;(${ETH_TOTAL_PRICE}+(${2}*${3}))/(${ETH_QTY}+${2})"`
-                ETH_R_LAST_SELL=$( printf "%.8f" $ETH_R_LAST_SELL )
-                JSON_UPDATE=`jq --arg rlastsell "${ETH_R_LAST_SELL}" '.mbc.currency.eth.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                BCH_TOTAL_LAST_SELL=`bc <<< "scale=2;(${BCH_R_QTY}*${BCH_R_LAST_SELL})"`
+                BCH_TOTAL_LAST_SELL=$( printf "%.8f" $BCH_TOTAL_LAST_SELL )
+                JSON_UPDATE=`jq --arg rtotallastsell "${BCH_TOTAL_LAST_SELL}" '.mbc.currency.bch.sell.rtotallastsell = $rtotallastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new ETH reference last sell price is ${ETH_R_LAST_SELL}"   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference total last sell price is ${BCH_TOTAL_LAST_SELL}"   >> ${BUYLOGFILE}
 
-                ETH_FLAG_ALERT=1
+                BCH_FLAG_ALERT=1
                 #update JSON value
-                JSON_UPDATE=`jq --arg flagalert "${ETH_FLAG_ALERT}" '.mbc.currency.eth.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                JSON_UPDATE=`jq --arg flagalert "${BCH_FLAG_ALERT}" '.mbc.currency.bch.sell.flagalert = $flagalert' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`ETH Flag alert has been enabled by user."   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`BCH Flag alert has been enabled by user."   >> ${BUYLOGFILE}
         elif [ "${1}" == "LTC" ];then
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1}." >> ${BUYLOGFILE}
             #BUY
-                LTC_TOTAL_PRICE=`bc <<< "scale=2;($LTC_QTY*$LTC_R_LAST_SELL)"`
-                LTC_TOTAL_PRICE=$( printf "%.8f" $LTC_TOTAL_PRICE )
+                BCH_R_QTY=`bc <<< "scale=2;($BCH_QTY+${2})"`
+                BCH_R_QTY=$( printf "%.8f" $BCH_R_QTY )
+                JSON_UPDATE=`jq --arg rqty "${BCH_R_QTY}" '.mbc.currency.bch.buy.rqty = $rqty' ${CONFIG_FILE}`
+                echo $JSON_UPDATE > ${CONFIG_FILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference quantitiy is ${BCH_R_QTY}."   >> ${BUYLOGFILE}
 
-                LTC_QTY=`bc <<< "scale=2;($LTC_QTY+${2})"`
-                LTC_QTY=$( printf "%.8f" $LTC_QTY )
-                JSON_UPDATE=`jq --arg rqty "${LTC_QTY}" '.mbc.currency.ltc.buy.rqty = $rqty' ${CONFIG_FILE}`
+                BCH_PRICE=`bc <<< "scale=2;($BCH_TOTAL_PRICE+(${2}*${3}))/($BCH_QTY+${2})"`
+                BCH_PRICE=$( printf "%.8f" $BCH_PRICE )
+                JSON_UPDATE=`jq --arg rprice "${BCH_PRICE}" '.mbc.currency.bch.buy.rprice = $rprice' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new LTC reference quantitiy is ${LTC_QTY}."   >> ${BUYLOGFILE}
- 
-                LTC_PRICE=`bc <<< "scale=2;($LTC_TOTAL_PRICE+(${2}*${3}))/(${LTC_QTY})"`
-                LTC_PRICE=$( printf "%.8f" $LTC_PRICE )
-                JSON_UPDATE=`jq --arg rprice "${LTC_PRICE}" '.mbc.currency.ltc.buy.rprice = $rprice' ${CONFIG_FILE}`
-                echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new LTC reference price is ${LTC_PRICE}"   >> ${BUYLOGFILE}
-                LTC_R_LAST_SELL=${LTC_PRICE}
-                JSON_UPDATE=`jq --arg rlastsell "${LTC_R_LAST_SELL}" '.mbc.currency.ltc.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
-                echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new R_LAST_SELL price from LTC has a new reference price: ${LTC_R_LAST_SELL}"   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference price is ${BCH_PRICE}"   >> ${BUYLOGFILE}
 
-                LTC_TOTAL_PRICE=`bc <<< "scale=2;(${LTC_TOTAL_PRICE}+(${2}*${3}))"`
-                LTC_TOTAL_PRICE=$( printf "%.8f" $LTC_TOTAL_PRICE )       
-                JSON_UPDATE=`jq --arg rtotalprice "${LTC_TOTAL_PRICE}" '.mbc.currency.ltc.buy.rtotalprice = $rtotalprice' ${CONFIG_FILE}`
+                BCH_TOTAL_PRICE=`bc <<< "scale=2;(${BCH_R_QTY}*${BCH_PRICE})"`
+                BCH_TOTAL_PRICE=$( printf "%.8f" $BCH_TOTAL_PRICE )       
+                JSON_UPDATE=`jq --arg rtotalprice "${BCH_TOTAL_PRICE}" '.mbc.currency.bch.buy.rtotalprice = $rtotalprice' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new LTC reference total price is ${LTC_TOTAL_PRICE}"   >> ${BUYLOGFILE}
-
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference total price is ${BCH_TOTAL_PRICE}"   >> ${BUYLOGFILE}
             #SELL
-                LTC_TOTAL_LAST_SELL=`bc <<< "scale=2;(${LTC_QTY}*${LTC_R_LAST_SELL})+(${2}*${3})"`
-                LTC_TOTAL_LAST_SELL=$( printf "%.8f" $LTC_TOTAL_LAST_SELL )
-                JSON_UPDATE=`jq --arg rtotallastsell "${LTC_TOTAL_LAST_SELL}" '.mbc.currency.ltc.sell.rtotallastsell = $rtotallastsell' ${CONFIG_FILE}`
+                BCH_R_LAST_SELL=`bc <<< "scale=2;(${BCH_TOTAL_LAST_SELL}+(${2}*${3}))/($BCH_QTY+${2})"`
+                BCH_R_LAST_SELL=$( printf "%.8f" $BCH_R_LAST_SELL )
+                JSON_UPDATE=`jq --arg rlastsell "${BCH_R_LAST_SELL}" '.mbc.currency.bch.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new LTC reference total last sell price is ${LTC_TOTAL_LAST_SELL}"   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new R_LAST_SELL price from BCH has a new reference price: ${BCH_R_LAST_SELL}"   >> ${BUYLOGFILE}
 
-                LTC_R_LAST_SELL=`bc <<< "scale=2;(${LTC_TOTAL_PRICE}+(${2}*${3}))/(${LTC_QTY}+${2})"`
-                LTC_R_LAST_SELL=$( printf "%.8f" $LTC_R_LAST_SELL )
-                JSON_UPDATE=`jq --arg rlastsell "${LTC_R_LAST_SELL}" '.mbc.currency.ltc.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                BCH_TOTAL_LAST_SELL=`bc <<< "scale=2;(${BCH_R_QTY}*${BCH_R_LAST_SELL})"`
+                BCH_TOTAL_LAST_SELL=$( printf "%.8f" $BCH_TOTAL_LAST_SELL )
+                JSON_UPDATE=`jq --arg rtotallastsell "${BCH_TOTAL_LAST_SELL}" '.mbc.currency.bch.sell.rtotallastsell = $rtotallastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new LTC reference last sell price is ${LTC_R_LAST_SELL}"   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference total last sell price is ${BCH_TOTAL_LAST_SELL}"   >> ${BUYLOGFILE}
 
-                LTC_FLAG_ALERT=1
+                BCH_FLAG_ALERT=1
                 #update JSON value
-                JSON_UPDATE=`jq --arg flagalert "${LTC_FLAG_ALERT}" '.mbc.currency.ltc.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                JSON_UPDATE=`jq --arg flagalert "${BCH_FLAG_ALERT}" '.mbc.currency.bch.sell.flagalert = $flagalert' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`LTC Flag alert has been enabled by user."   >> ${BUYLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`BCH Flag alert has been enabled by user."   >> ${BUYLOGFILE}
 
         else
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`ERR: Wrong currency type ${1}." >> ${BUYLOGFILE}
@@ -1043,13 +1013,17 @@ function recalcSelling {
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference last sell price is ${BCH_R_LAST_SELL}"   >> ${SELLLOGFILE}
 
-echo "BCH_QTY=$BCH_QTY"
-echo "BCH_R_LAST_SELL=$BCH_R_LAST_SELL"
                 BCH_TOTAL_LAST_SELL=`bc <<< "scale=2;(${BCH_QTY}*${BCH_R_LAST_SELL})"`
                 BCH_TOTAL_LAST_SELL=$( printf "%.8f" $BCH_TOTAL_LAST_SELL )
                 JSON_UPDATE=`jq --arg rtotallastsell "${BCH_TOTAL_LAST_SELL}" '.mbc.currency.bch.sell.rtotallastsell = $rtotallastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference total last sell price is ${BCH_TOTAL_LAST_SELL}"   >> ${BUYLOGFILE}
+
+                BCH_TOTAL_PRICE=`bc <<< "scale=2;(${BCH_QTY}*${BCH_PRICE})"`
+                BCH_TOTAL_PRICE=$( printf "%.8f" $BCH_TOTAL_PRICE )       
+                JSON_UPDATE=`jq --arg rtotalprice "${BCH_TOTAL_PRICE}" '.mbc.currency.bch.buy.rtotalprice = $rtotalprice' ${CONFIG_FILE}`
+                echo $JSON_UPDATE > ${CONFIG_FILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference total price is ${BCH_TOTAL_PRICE}"   >> ${BUYLOGFILE}
 
                 BCH_FLAG_ALERT=1
                 #update JSON value
@@ -1058,96 +1032,144 @@ echo "BCH_R_LAST_SELL=$BCH_R_LAST_SELL"
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`BCH Flag alert has been enabled by user."   >> ${SELLLOGFILE}
 
         elif [ "${1}" == "BTC" ];then
-               echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1} to recalc selling." >> ${SELLLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1} to recalc selling." >> ${SELLLOGFILE}
 
             #BUY
-                BTC_QTY=`bc <<< "scale=2;($BTC_QTY-${2})"`
-                BTC_QTY=$( printf "%.8f" $BTC_QTY )
-                JSON_UPDATE=`jq --arg rqty "${BTC_QTY}" '.mbc.currency.btc.buy.rqty = $rqty' ${CONFIG_FILE}`
+                BCH_QTY=`bc <<< "scale=2;($BCH_QTY-${2})"`
+                BCH_QTY=$( printf "%.8f" $BCH_QTY )
+                JSON_UPDATE=`jq --arg rqty "${BCH_QTY}" '.mbc.currency.bch.buy.rqty = $rqty' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BTC reference quantitiy is ${BTC_QTY}."   >> ${SELLLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference quantitiy is ${BCH_QTY}."   >> ${SELLLOGFILE}
 
             #SELL
-                BTC_R_LAST_SELL=${3}
-                BTC_R_LAST_SELL=$( printf "%.8f" $BTC_R_LAST_SELL )
-                JSON_UPDATE=`jq --arg rlastsell "${BTC_R_LAST_SELL}" '.mbc.currency.btc.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                BCH_R_LAST_SELL=${3}
+                BCH_R_LAST_SELL=$( printf "%.8f" $BCH_R_LAST_SELL )
+                JSON_UPDATE=`jq --arg rlastsell "${BCH_R_LAST_SELL}" '.mbc.currency.bch.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BTC reference last sell price is ${BTC_R_LAST_SELL}"   >> ${SELLLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference last sell price is ${BCH_R_LAST_SELL}"   >> ${SELLLOGFILE}
 
-                BTC_FLAG_ALERT=1
-                #update JSON value
-                JSON_UPDATE=`jq --arg flagalert "${BTC_FLAG_ALERT}" '.mbc.currency.btc.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                BCH_TOTAL_LAST_SELL=`bc <<< "scale=2;(${BCH_QTY}*${BCH_R_LAST_SELL})"`
+                BCH_TOTAL_LAST_SELL=$( printf "%.8f" $BCH_TOTAL_LAST_SELL )
+                JSON_UPDATE=`jq --arg rtotallastsell "${BCH_TOTAL_LAST_SELL}" '.mbc.currency.bch.sell.rtotallastsell = $rtotallastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`BTC Flag alert has been enabled by user."   >> ${SELLLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference total last sell price is ${BCH_TOTAL_LAST_SELL}"   >> ${BUYLOGFILE}
+
+                BCH_TOTAL_PRICE=`bc <<< "scale=2;(${BCH_QTY}*${BCH_PRICE})"`
+                BCH_TOTAL_PRICE=$( printf "%.8f" $BCH_TOTAL_PRICE )       
+                JSON_UPDATE=`jq --arg rtotalprice "${BCH_TOTAL_PRICE}" '.mbc.currency.bch.buy.rtotalprice = $rtotalprice' ${CONFIG_FILE}`
+                echo $JSON_UPDATE > ${CONFIG_FILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference total price is ${BCH_TOTAL_PRICE}"   >> ${BUYLOGFILE}
+
+                BCH_FLAG_ALERT=1
+                #update JSON value
+                JSON_UPDATE=`jq --arg flagalert "${BCH_FLAG_ALERT}" '.mbc.currency.bch.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                echo $JSON_UPDATE > ${CONFIG_FILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`BCH Flag alert has been enabled by user."   >> ${SELLLOGFILE}
 
         elif [ "${1}" == "XRP" ];then
-               echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1} to recalc selling." >> ${SELLLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1} to recalc selling." >> ${SELLLOGFILE}
 
             #BUY
-                XRP_QTY=`bc <<< "scale=2;($XRP_QTY-${2})"`
-                XRP_QTY=$( printf "%.8f" $XRP_QTY )
-                JSON_UPDATE=`jq --arg rqty "${XRP_QTY}" '.mbc.currency.xrp.buy.rqty = $rqty' ${CONFIG_FILE}`
+                BCH_QTY=`bc <<< "scale=2;($BCH_QTY-${2})"`
+                BCH_QTY=$( printf "%.8f" $BCH_QTY )
+                JSON_UPDATE=`jq --arg rqty "${BCH_QTY}" '.mbc.currency.bch.buy.rqty = $rqty' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new XRP reference quantitiy is ${XRP_QTY}."   >> ${SELLLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference quantitiy is ${BCH_QTY}."   >> ${SELLLOGFILE}
 
             #SELL
-                XRP_R_LAST_SELL=${3}
-                XRP_R_LAST_SELL=$( printf "%.8f" $XRP_R_LAST_SELL )
-                JSON_UPDATE=`jq --arg rlastsell "${XRP_R_LAST_SELL}" '.mbc.currency.xrp.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                BCH_R_LAST_SELL=${3}
+                BCH_R_LAST_SELL=$( printf "%.8f" $BCH_R_LAST_SELL )
+                JSON_UPDATE=`jq --arg rlastsell "${BCH_R_LAST_SELL}" '.mbc.currency.bch.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new XRP reference last sell price is ${XRP_R_LAST_SELL}"   >> ${SELLLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference last sell price is ${BCH_R_LAST_SELL}"   >> ${SELLLOGFILE}
 
-                XRP_FLAG_ALERT=1
-                #update JSON value
-                JSON_UPDATE=`jq --arg flagalert "${XRP_FLAG_ALERT}" '.mbc.currency.xrp.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                BCH_TOTAL_LAST_SELL=`bc <<< "scale=2;(${BCH_QTY}*${BCH_R_LAST_SELL})"`
+                BCH_TOTAL_LAST_SELL=$( printf "%.8f" $BCH_TOTAL_LAST_SELL )
+                JSON_UPDATE=`jq --arg rtotallastsell "${BCH_TOTAL_LAST_SELL}" '.mbc.currency.bch.sell.rtotallastsell = $rtotallastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`XRP Flag alert has been enabled by user."   >> ${SELLLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference total last sell price is ${BCH_TOTAL_LAST_SELL}"   >> ${BUYLOGFILE}
+
+                BCH_TOTAL_PRICE=`bc <<< "scale=2;(${BCH_QTY}*${BCH_PRICE})"`
+                BCH_TOTAL_PRICE=$( printf "%.8f" $BCH_TOTAL_PRICE )       
+                JSON_UPDATE=`jq --arg rtotalprice "${BCH_TOTAL_PRICE}" '.mbc.currency.bch.buy.rtotalprice = $rtotalprice' ${CONFIG_FILE}`
+                echo $JSON_UPDATE > ${CONFIG_FILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference total price is ${BCH_TOTAL_PRICE}"   >> ${BUYLOGFILE}
+
+                BCH_FLAG_ALERT=1
+                #update JSON value
+                JSON_UPDATE=`jq --arg flagalert "${BCH_FLAG_ALERT}" '.mbc.currency.bch.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                echo $JSON_UPDATE > ${CONFIG_FILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`BCH Flag alert has been enabled by user."   >> ${SELLLOGFILE}
 
         elif [ "${1}" == "ETH" ];then
-               echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1} to recalc selling." >> ${SELLLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1} to recalc selling." >> ${SELLLOGFILE}
 
             #BUY
-                ETH_QTY=`bc <<< "scale=2;($ETH_QTY-${2})"`
-                ETH_QTY=$( printf "%.8f" $ETH_QTY )
-                JSON_UPDATE=`jq --arg rqty "${ETH_QTY}" '.mbc.currency.eth.buy.rqty = $rqty' ${CONFIG_FILE}`
+                BCH_QTY=`bc <<< "scale=2;($BCH_QTY-${2})"`
+                BCH_QTY=$( printf "%.8f" $BCH_QTY )
+                JSON_UPDATE=`jq --arg rqty "${BCH_QTY}" '.mbc.currency.bch.buy.rqty = $rqty' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new ETH reference quantitiy is ${ETH_QTY}."   >> ${SELLLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference quantitiy is ${BCH_QTY}."   >> ${SELLLOGFILE}
 
             #SELL
-                ETH_R_LAST_SELL=${3}
-                ETH_R_LAST_SELL=$( printf "%.8f" $ETH_R_LAST_SELL )
-                JSON_UPDATE=`jq --arg rlastsell "${ETH_R_LAST_SELL}" '.mbc.currency.eth.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                BCH_R_LAST_SELL=${3}
+                BCH_R_LAST_SELL=$( printf "%.8f" $BCH_R_LAST_SELL )
+                JSON_UPDATE=`jq --arg rlastsell "${BCH_R_LAST_SELL}" '.mbc.currency.bch.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new ETH reference last sell price is ${ETH_R_LAST_SELL}"   >> ${SELLLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference last sell price is ${BCH_R_LAST_SELL}"   >> ${SELLLOGFILE}
 
-                ETH_FLAG_ALERT=1
-                #update JSON value
-                JSON_UPDATE=`jq --arg flagalert "${ETH_FLAG_ALERT}" '.mbc.currency.eth.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                BCH_TOTAL_LAST_SELL=`bc <<< "scale=2;(${BCH_QTY}*${BCH_R_LAST_SELL})"`
+                BCH_TOTAL_LAST_SELL=$( printf "%.8f" $BCH_TOTAL_LAST_SELL )
+                JSON_UPDATE=`jq --arg rtotallastsell "${BCH_TOTAL_LAST_SELL}" '.mbc.currency.bch.sell.rtotallastsell = $rtotallastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`ETH Flag alert has been enabled by user."   >> ${SELLLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference total last sell price is ${BCH_TOTAL_LAST_SELL}"   >> ${BUYLOGFILE}
+
+                BCH_TOTAL_PRICE=`bc <<< "scale=2;(${BCH_QTY}*${BCH_PRICE})"`
+                BCH_TOTAL_PRICE=$( printf "%.8f" $BCH_TOTAL_PRICE )       
+                JSON_UPDATE=`jq --arg rtotalprice "${BCH_TOTAL_PRICE}" '.mbc.currency.bch.buy.rtotalprice = $rtotalprice' ${CONFIG_FILE}`
+                echo $JSON_UPDATE > ${CONFIG_FILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference total price is ${BCH_TOTAL_PRICE}"   >> ${BUYLOGFILE}
+
+                BCH_FLAG_ALERT=1
+                #update JSON value
+                JSON_UPDATE=`jq --arg flagalert "${BCH_FLAG_ALERT}" '.mbc.currency.bch.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                echo $JSON_UPDATE > ${CONFIG_FILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`BCH Flag alert has been enabled by user."   >> ${SELLLOGFILE}
 
         elif [ "${1}" == "LTC" ];then
-               echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1} to recalc selling." >> ${SELLLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`INF.: Currency type choosed ${1} to recalc selling." >> ${SELLLOGFILE}
 
             #BUY
-                LTC_QTY=`bc <<< "scale=2;($LTC_QTY-${2})"`
-                LTC_QTY=$( printf "%.8f" $LTC_QTY )
-                JSON_UPDATE=`jq --arg rqty "${LTC_QTY}" '.mbc.currency.ltc.buy.rqty = $rqty' ${CONFIG_FILE}`
+                BCH_QTY=`bc <<< "scale=2;($BCH_QTY-${2})"`
+                BCH_QTY=$( printf "%.8f" $BCH_QTY )
+                JSON_UPDATE=`jq --arg rqty "${BCH_QTY}" '.mbc.currency.bch.buy.rqty = $rqty' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new LTC reference quantitiy is ${LTC_QTY}."   >> ${SELLLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference quantitiy is ${BCH_QTY}."   >> ${SELLLOGFILE}
 
             #SELL
-                LTC_R_LAST_SELL=${3}
-                LTC_R_LAST_SELL=$( printf "%.8f" $LTC_R_LAST_SELL )
-                JSON_UPDATE=`jq --arg rlastsell "${LTC_R_LAST_SELL}" '.mbc.currency.ltc.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
+                BCH_R_LAST_SELL=${3}
+                BCH_R_LAST_SELL=$( printf "%.8f" $BCH_R_LAST_SELL )
+                JSON_UPDATE=`jq --arg rlastsell "${BCH_R_LAST_SELL}" '.mbc.currency.bch.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new LTC reference last sell price is ${LTC_R_LAST_SELL}"   >> ${SELLLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference last sell price is ${BCH_R_LAST_SELL}"   >> ${SELLLOGFILE}
 
-                LTC_FLAG_ALERT=1
-                #update JSON value
-                JSON_UPDATE=`jq --arg flagalert "${LTC_FLAG_ALERT}" '.mbc.currency.ltc.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                BCH_TOTAL_LAST_SELL=`bc <<< "scale=2;(${BCH_QTY}*${BCH_R_LAST_SELL})"`
+                BCH_TOTAL_LAST_SELL=$( printf "%.8f" $BCH_TOTAL_LAST_SELL )
+                JSON_UPDATE=`jq --arg rtotallastsell "${BCH_TOTAL_LAST_SELL}" '.mbc.currency.bch.sell.rtotallastsell = $rtotallastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
-                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`LTC Flag alert has been enabled by user."   >> ${SELLLOGFILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference total last sell price is ${BCH_TOTAL_LAST_SELL}"   >> ${BUYLOGFILE}
+
+                BCH_TOTAL_PRICE=`bc <<< "scale=2;(${BCH_QTY}*${BCH_PRICE})"`
+                BCH_TOTAL_PRICE=$( printf "%.8f" $BCH_TOTAL_PRICE )       
+                JSON_UPDATE=`jq --arg rtotalprice "${BCH_TOTAL_PRICE}" '.mbc.currency.bch.buy.rtotalprice = $rtotalprice' ${CONFIG_FILE}`
+                echo $JSON_UPDATE > ${CONFIG_FILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference total price is ${BCH_TOTAL_PRICE}"   >> ${BUYLOGFILE}
+
+                BCH_FLAG_ALERT=1
+                #update JSON value
+                JSON_UPDATE=`jq --arg flagalert "${BCH_FLAG_ALERT}" '.mbc.currency.bch.sell.flagalert = $flagalert' ${CONFIG_FILE}`
+                echo $JSON_UPDATE > ${CONFIG_FILE}
+                echo "`date "+%m/%d/%Y  %H:%M:%S -  "`BCH Flag alert has been enabled by user."   >> ${SELLLOGFILE}
 
         else
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`ERR: Wrong currency type ${1}." >> ${SELLLOGFILE}
