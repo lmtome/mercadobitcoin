@@ -1204,11 +1204,11 @@ function checkTimeToBuying {
         VALUES[3]=${ETH_DELTA_BUY}
         VALUES[4]=${LTC_DELTA_BUY}
 
-        echo "BCH=${BCH_DELTA_BUY}"
-        echo "BTC=${BTC_DELTA_BUY}"
-        echo "XRP=${XRP_DELTA_BUY}"
-        echo "ETH=${ETH_DELTA_BUY}"
-        echo "LTC=${LTC_DELTA_BUY}"
+        echo "BCH=${BCH_DELTA_BUY}%"
+        echo "BTC=${BTC_DELTA_BUY}%"
+        echo "XRP=${XRP_DELTA_BUY}%"
+        echo "ETH=${ETH_DELTA_BUY}%"
+        echo "LTC=${LTC_DELTA_BUY}%"
 
         for ((x=0; x < ${#VALUES[*]}; x++)) ; do
                 count=0
