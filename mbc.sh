@@ -795,14 +795,12 @@ function recalcBuying {
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference price is ${BCH_PRICE}"   >> ${BUYLOGFILE}
 
-                BCH_TOTAL_PRICE=`bc <<< "scale=2;(${BCH_QTY}*${BCH_R_LAST_SELL})"`
+                BCH_TOTAL_PRICE=`bc <<< "scale=2;(${BCH_R_QTY}*${BCH_PRICE})"`
                 BCH_TOTAL_PRICE=$( printf "%.8f" $BCH_TOTAL_PRICE )       
                 JSON_UPDATE=`jq --arg rtotalprice "${BCH_TOTAL_PRICE}" '.mbc.currency.bch.buy.rtotalprice = $rtotalprice' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new BCH reference total price is ${BCH_TOTAL_PRICE}"   >> ${BUYLOGFILE}
             #SELL
-echo "BCH_TOTAL_LAST_SELL=${BCH_TOTAL_LAST_SELL}"
-echo "BCH_QTY=${BCH_QTY}"
                 BCH_R_LAST_SELL=`bc <<< "scale=2;(${BCH_TOTAL_LAST_SELL}+(${2}*${3}))/($BCH_QTY+${2})"`
                 BCH_R_LAST_SELL=$( printf "%.8f" $BCH_R_LAST_SELL )
                 JSON_UPDATE=`jq --arg rlastsell "${BCH_R_LAST_SELL}" '.mbc.currency.bch.sell.rlastsell = $rlastsell' ${CONFIG_FILE}`
