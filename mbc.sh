@@ -1181,19 +1181,19 @@ function recalcSelling {
 function checkTimeToBuying {
 
         #Getting DELTA from each crypto coin
-        BCH_DELTA_BUY=`bc <<< "((${BCH_LAST_PRICE}/${BCH_R_LAST_SELL})-1)"`
+        BCH_DELTA_BUY=`bc <<< "scale=8;((${BCH_LAST_PRICE}/${BCH_R_LAST_SELL})-1)"`
         BCH_DELTA_BUY=$( printf "%.8f" $BCH_DELTA_BUY )
 
-        BTC_DELTA_BUY=`bc <<< "((${BTC_LAST_PRICE}/${BTC_R_LAST_SELL})-1)"`
+        BTC_DELTA_BUY=`bc <<< "scale=8;((${BTC_LAST_PRICE}/${BTC_R_LAST_SELL})-1)"`
         BTC_DELTA_BUY=$( printf "%.8f" $BTC_DELTA_BUY )
 
-        XRP_DELTA_BUY=`bc <<< "((${XRP_LAST_PRICE}/${XRP_R_LAST_SELL})-1)"`
+        XRP_DELTA_BUY=`bc <<< "scale=8;((${XRP_LAST_PRICE}/${XRP_R_LAST_SELL})-1)"`
         XRP_DELTA_BUY=$( printf "%.8f" $XRP_DELTA_BUY )
 
-        ETH_DELTA_BUY=`bc <<< "((${ETH_LAST_PRICE}/${ETH_R_LAST_SELL})-1)"`
+        ETH_DELTA_BUY=`bc <<< "scale=8;((${ETH_LAST_PRICE}/${ETH_R_LAST_SELL})-1)"`
         ETH_DELTA_BUY=$( printf "%.8f" $ETH_DELTA_BUY )
 
-        LTC_DELTA_BUY=`bc <<< "((${LTC_LAST_PRICE}/${LTC_R_LAST_SELL})-1)"`
+        LTC_DELTA_BUY=`bc <<< "scale=8;((${LTC_LAST_PRICE}/${LTC_R_LAST_SELL})-1)"`
         LTC_DELTA_BUY=$( printf "%.8f" $LTC_DELTA_BUY )
         
         #Identifying which one is smaller.
