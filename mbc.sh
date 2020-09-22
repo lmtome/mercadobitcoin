@@ -809,7 +809,7 @@ echo "BCH_QTY=${BCH_QTY}"
                 echo $JSON_UPDATE > ${CONFIG_FILE}
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`The new R_LAST_SELL price from BCH has a new reference price: ${BCH_R_LAST_SELL}"   >> ${BUYLOGFILE}
 
-                BCH_TOTAL_LAST_SELL=`bc <<< "scale=2;(${BCH_QTY}*${BCH_R_LAST_SELL})"`
+                BCH_TOTAL_LAST_SELL=`bc <<< "scale=2;(${BCH_R_QTY}*${BCH_R_LAST_SELL})"`
                 BCH_TOTAL_LAST_SELL=$( printf "%.8f" $BCH_TOTAL_LAST_SELL )
                 JSON_UPDATE=`jq --arg rtotallastsell "${BCH_TOTAL_LAST_SELL}" '.mbc.currency.bch.sell.rtotallastsell = $rtotallastsell' ${CONFIG_FILE}`
                 echo $JSON_UPDATE > ${CONFIG_FILE}
