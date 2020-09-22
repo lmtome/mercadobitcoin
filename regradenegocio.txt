@@ -78,12 +78,12 @@ BUY
 
     TIPO DA MOEDA
             BUY
-		    R_QUANTIDADE
+		    R_QTY
 		    R_PRICE 
 		    R_TOTAL_PRICE
 
-    R_QUANTIDADE=(R_QUANTIDADE + QTD_FLOAT)
-    R_PRICE=(R_TOTAL_PRICE+(QTD_FLOAT * CURRENT_PRICE))/(R_QUANTIDADE + QTD_FLOAT)
+    R_QTY=(R_QTY + QTD_FLOAT)
+    R_PRICE=(R_TOTAL_PRICE+(QTD_FLOAT * CURRENT_PRICE))/(R_QTY + QTD_FLOAT)
     R_TOTAL_PRICE=(R_TOTAL_PRICE + (QTD_FLOAT * CURRENT_PRICE))
 
     3. Recalculei os VALORES DE REFERENCIA PARA SELL. 
@@ -93,10 +93,10 @@ BUY
                     R_LAST_SELL
                     R_TOTAL_LAST_SELL
 
-    R_QUANTIDADE=(R_QUANTIDADE - QTD_FLOAT)
+    R_QTY=(R_QTY - QTD_FLOAT)
 
-    R_TOTAL_LAST_SELL=(R_QUANTIDADE * R_LAST_SELL) + (QTD_FLOAT * CURRENT_PRICE)
-    R_LAST_SELL=(R_TOTAL_PRICE + (QTD_FLOAT * CURRENT_PRICE))/(R_QUANTIDADE + QTD_FLOAT)
+    R_TOTAL_LAST_SELL=(R_QTY * R_LAST_SELL) + (QTD_FLOAT * CURRENT_PRICE)
+    R_LAST_SELL=(R_TOTAL_PRICE + (QTD_FLOAT * CURRENT_PRICE))/(R_QTY + QTD_FLOAT)
     
     4. setar FLAG_ALERT=true para habilitar os alertas novamente
     *caso o usuario nao utilize o SELL o alerta so voltara a funcionar se o usuario habilitar via menu*
