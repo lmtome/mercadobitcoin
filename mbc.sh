@@ -1181,20 +1181,20 @@ function recalcSelling {
 function checkTimeToBuying {
 
         #Getting DELTA from each crypto coin
-        BCH_DELTA_BUY=`bc <<< "scale=8;((${BCH_LAST_PRICE}/${BCH_R_LAST_SELL})-1)"`
-        BCH_DELTA_BUY=$( printf "%.8f" $BCH_DELTA_BUY )
+        BCH_DELTA_BUY=`bc <<< "scale=8;((${BCH_LAST_PRICE}/${BCH_R_LAST_SELL})-1)*100"`
+        BCH_DELTA_BUY=$( printf "%.2f" $BCH_DELTA_BUY )
 
-        BTC_DELTA_BUY=`bc <<< "scale=8;((${BTC_LAST_PRICE}/${BTC_R_LAST_SELL})-1)"`
-        BTC_DELTA_BUY=$( printf "%.8f" $BTC_DELTA_BUY )
+        BTC_DELTA_BUY=`bc <<< "scale=8;((${BTC_LAST_PRICE}/${BTC_R_LAST_SELL})-1)*100"`
+        BTC_DELTA_BUY=$( printf "%.2f" $BTC_DELTA_BUY )
 
-        XRP_DELTA_BUY=`bc <<< "scale=8;((${XRP_LAST_PRICE}/${XRP_R_LAST_SELL})-1)"`
-        XRP_DELTA_BUY=$( printf "%.8f" $XRP_DELTA_BUY )
+        XRP_DELTA_BUY=`bc <<< "scale=8;((${XRP_LAST_PRICE}/${XRP_R_LAST_SELL})-1)*100"`
+        XRP_DELTA_BUY=$( printf "%.2f" $XRP_DELTA_BUY )
 
-        ETH_DELTA_BUY=`bc <<< "scale=8;((${ETH_LAST_PRICE}/${ETH_R_LAST_SELL})-1)"`
-        ETH_DELTA_BUY=$( printf "%.8f" $ETH_DELTA_BUY )
+        ETH_DELTA_BUY=`bc <<< "scale=8;((${ETH_LAST_PRICE}/${ETH_R_LAST_SELL})-1)*100"`
+        ETH_DELTA_BUY=$( printf "%.2f" $ETH_DELTA_BUY )
 
-        LTC_DELTA_BUY=`bc <<< "scale=8;((${LTC_LAST_PRICE}/${LTC_R_LAST_SELL})-1)"`
-        LTC_DELTA_BUY=$( printf "%.8f" $LTC_DELTA_BUY )
+        LTC_DELTA_BUY=`bc <<< "scale=8;((${LTC_LAST_PRICE}/${LTC_R_LAST_SELL})-1)*100"`
+        LTC_DELTA_BUY=$( printf "%.2f" $LTC_DELTA_BUY )
         
         #Identifying which one is smaller.
         #Considering BCH=0, BTC=1, XRP=2, ETH=3, LTC=4
@@ -1222,7 +1222,19 @@ function checkTimeToBuying {
                 done
 
                 if [ $count -ge 4 ]; then
-                        echo "Next Buy is crypto currency with DELTA: ${VALUES[$x]}"
+                        case $x in
+                                0)
+                                        echo "Next Buy is crypto currency [BCH] with DELTA ${VALUES[$x]} %";;
+                                1)
+                                        echo "Next Buy is crypto currency [BTC] with DELTA ${VALUES[$x]} %";;
+                                2)
+                                        echo "Next Buy is crypto currency [XRP] with DELTA ${VALUES[$x]} %";;
+                                3)
+                                        echo "Next Buy is crypto currency [ETH] with DELTA ${VALUES[$x]} %";;
+                                4)
+                                        echo "Next Buy is crypto currency [LTC] with DELTA ${VALUES[$x]} %";;
+                                *);;
+                        esac
                 fi
         done
 }
