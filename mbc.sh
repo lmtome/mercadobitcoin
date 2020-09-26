@@ -406,6 +406,9 @@ function checkTimeToSell {
                         fi
                 else
                         echo "`date "+%m/%d/%Y  %H:%M:%S -  "ERR3:`${3} is a invalid crypto currency. This scripts accept BCH, BTC, XRP, ETH and LTC ONLY!"   >> ${LOGFILE}
+                        echo "ERR3: Wrong currency type ${3}.  This scripts accept BCH, BTC, XRP, ETH and LTC ONLY! Press [ENTER] to continue!"
+                        read a
+
 			exit 3
                 fi
         else
@@ -975,6 +978,9 @@ function recalcBuying {
 
         else
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`ERR: Wrong currency type ${1}." >> ${BUYLOGFILE}
+                echo "ERR: Wrong currency type ${1}. Press [ENTER] to continue!"
+                read a 
+                
                 exit 1
         fi
 
@@ -1173,6 +1179,8 @@ function recalcSelling {
 
         else
                 echo "`date "+%m/%d/%Y  %H:%M:%S -  "`ERR: Wrong currency type ${1}." >> ${SELLLOGFILE}
+                echo "ERR: Wrong currency type ${1}. Press [ENTER] to continue!"
+                read a
                 exit 1
         fi
 
